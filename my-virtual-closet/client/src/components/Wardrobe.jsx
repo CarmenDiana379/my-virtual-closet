@@ -7,59 +7,81 @@ function Wardrobe() {
     <div
       onClick={() => setIsOpen(!isOpen)}
       style={{
-        width: "700px",
-        height: "280px",
-        margin: "40px auto",
-        border: "3px solid black",
+        width: "92vw",
+        maxWidth: "1500px",
+        height: "560px",
+        margin: "30px auto",
+        border: "4px solid black",
         position: "relative",
         overflow: "hidden",
-        cursor: "pointer"
+        cursor: "pointer",
+        background: "#f9f9f9"
       }}
     >
-      {/* Inside wardrobe layout */}
       {isOpen && (
         <div
           style={{
             position: "absolute",
             width: "100%",
             height: "100%",
-            padding: "10px",
+            padding: "25px",
             boxSizing: "border-box",
-            textAlign: "center"
+            display: "flex",
+            flexDirection: "column",
+            justifyContent: "space-between"
           }}
         >
-          <div style={{ borderBottom: "2px solid black" }}>
+          <div
+            style={{
+              borderBottom: "2px solid black",
+              paddingBottom: "12px",
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: "22px"
+            }}
+          >
             HEADWEAR
           </div>
 
           <div
             style={{
               display: "flex",
-              justifyContent: "space-around",
-              marginTop: "20px"
+              justifyContent: "space-between",
+              gap: "25px",
+              marginTop: "25px",
+              flexGrow: 1
             }}
           >
-            <div style={{ border: "1px solid black", padding: "10px" }}>
-              JACKETS
-            </div>
-
-            <div style={{ border: "1px solid black", padding: "10px" }}>
-              TOPS/DRESSES
-            </div>
-
-            <div style={{ border: "1px solid black", padding: "10px" }}>
-              BOTTOMS
-            </div>
-
-            <div style={{ border: "1px solid black", padding: "10px" }}>
-              ACCESSORIES
-            </div>
+            {["JACKETS", "TOPS / DRESSES", "BOTTOMS", "ACCESSORIES"].map(
+              (item) => (
+                <div
+                  key={item}
+                  style={{
+                    width: "25%",
+                    border: "2px solid black",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "center",
+                    alignItems: "center",
+                    gap: "18px",
+                    fontSize: "22px"
+                  }}
+                >
+                  <button>←</button>
+                  <div>{item}</div>
+                  <button>→</button>
+                </div>
+              )
+            )}
           </div>
 
           <div
             style={{
               borderTop: "2px solid black",
-              marginTop: "20px"
+              paddingTop: "12px",
+              textAlign: "center",
+              fontWeight: "bold",
+              fontSize: "22px"
             }}
           >
             SHOES
@@ -67,7 +89,6 @@ function Wardrobe() {
         </div>
       )}
 
-      {/* Left Door */}
       <div
         style={{
           position: "absolute",
@@ -75,13 +96,12 @@ function Wardrobe() {
           top: "0",
           width: "50%",
           height: "100%",
-          borderRight: "2px solid black",
+          borderRight: "3px solid black",
           background: "white",
           transition: "0.6s"
         }}
       />
 
-      {/* Right Door */}
       <div
         style={{
           position: "absolute",
@@ -89,7 +109,7 @@ function Wardrobe() {
           top: "0",
           width: "50%",
           height: "100%",
-          borderLeft: "2px solid black",
+          borderLeft: "3px solid black",
           background: "white",
           transition: "0.6s"
         }}

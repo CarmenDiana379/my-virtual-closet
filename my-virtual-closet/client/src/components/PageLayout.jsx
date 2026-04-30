@@ -1,8 +1,9 @@
-import React from "react";
-import Wardrobe from "../components/Wardrobe";
-import FeatureIcons from "../components/FeatureIcons";
+import { useNavigate } from "react-router-dom";
+import FeatureIcons from "./FeatureIcons";
 
-function DashboardPage() {
+function PageLayout({ title, children, showDashboardButton = true }) {
+  const navigate = useNavigate();
+
   return (
     <div
       style={{
@@ -23,27 +24,28 @@ function DashboardPage() {
         }}
       >
         <h2>LOGO</h2>
-        <button>Logout</button>
+
+        {showDashboardButton && (
+          <button onClick={() => navigate("/dashboard")}>
+            Dashboard
+          </button>
+        )}
       </div>
 
-      {/* MAIN CONTENT */}
+      {/* PAGE CONTENT */}
       <div
         style={{
           flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center"
+          textAlign: "center",
+          padding: "40px"
         }}
       >
-        <div style={{ textAlign: "center" }}>
-          <h1>Welcome to your wardrobe [ User Name ]!</h1>
-          <p>Create outfits by mixing items in your wardrobe</p>
-        </div>
+        <h1>{title}</h1>
 
-        <Wardrobe />
+        {children}
       </div>
 
-      {/* FEATURE BUTTONS — stays above footer */}
+      {/* FEATURE BUTTONS */}
       <div
         style={{
           display: "flex",
@@ -70,4 +72,4 @@ function DashboardPage() {
   );
 }
 
-export default DashboardPage;
+export default PageLayout;
