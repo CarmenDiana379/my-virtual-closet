@@ -15,7 +15,17 @@ function WishlistPage() {
   const [imageUrl, setImageUrl] = useState("");
   const [productLink, setProductLink] = useState("");
   const [shopName, setShopName] = useState("");
-  const [uploadedImage, setUploadedImage] = useState(null);
+  const [uploadedImage, setUploadedImage] = useState("");
+
+  const convertImageToBase64 = (file) => {
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setUploadedImage(reader.result);
+    };
+
+    reader.readAsDataURL(file);
+  };
 
   const handleAddWishlistItem = (e) => {
     e.preventDefault();
@@ -34,7 +44,7 @@ function WishlistPage() {
       id: Date.now(),
       name,
       category,
-      image: uploadedImage ? URL.createObjectURL(uploadedImage) : imageUrl,
+      image: uploadedImage || imageUrl,
       productLink,
       shopName,
       source: uploadedImage ? "store-photo" : "online"
@@ -47,7 +57,7 @@ function WishlistPage() {
     setImageUrl("");
     setProductLink("");
     setShopName("");
-    setUploadedImage(null);
+    setUploadedImage("");
   };
 
   return (
@@ -132,19 +142,33 @@ function WishlistPage() {
         />
 
         <div style={{ marginTop: "10px" }}>
-          <label>
-            Upload store photo:
-          </label>
+          <label>Upload store photo:</label>
 
           <input
             type="file"
             accept="image/*"
-            onChange={(e) => setUploadedImage(e.target.files[0])}
+            onChange={(e) => convertImageToBase64(e.target.files[0])}
             style={{
               marginLeft: "10px"
             }}
           />
         </div>
+
+        {uploadedImage && (
+          <img
+            src={uploadedImage}
+            alt="Preview"
+            style={{
+              width: "90px",
+              height: "90px",
+              objectFit: "cover",
+              marginTop: "10px",
+              border: "1px solid black"
+            }}
+          />
+        )}
+
+        <br />
 
         <button
           type="submit"
@@ -179,16 +203,18 @@ function WishlistPage() {
                 textAlign: "center"
               }}
             >
-              <img
-                src={item.image}
-                alt={item.name}
-                style={{
-                  width: "120px",
-                  height: "120px",
-                  objectFit: "cover",
-                  border: "1px solid black"
-                }}
-              />
+              {item.image && (
+                <img
+                  src={item.image}
+                  alt={item.name}
+                  style={{
+                    width: "120px",
+                    height: "120px",
+                    objectFit: "cover",
+                    border: "1px solid black"
+                  }}
+                />
+              )}
 
               <h3>{item.name}</h3>
               <p>{item.category}</p>

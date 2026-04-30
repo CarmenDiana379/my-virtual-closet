@@ -3,7 +3,14 @@ import PageLayout from "../components/PageLayout";
 import { useWardrobe } from "../store/WardrobeStore";
 
 function SellPage() {
-  const { items, sellItems, addSellItem, removeSellItem } = useWardrobe();
+  const {
+    items,
+    sellItems,
+    addSellItem,
+    removeSellItem,
+    moveWardrobeItemToSell,
+    restoreSellItemToWardrobe
+  } = useWardrobe();
 
   const [mode, setMode] = useState("wardrobe");
 
@@ -32,46 +39,68 @@ function SellPage() {
     setEbayLink("");
   };
 
-  const handleAddSellItem = (e) => {
+  const convertImageToBase64 = (file) => {
+    return new Promise((resolve) => {
+      const reader = new FileReader();
+
+      reader.onloadend = () => {
+        resolve(reader.result);
+      };
+
+      reader.readAsDataURL(file);
+    });
+  };
+
+  const handleAddSellItem = async (e) => {
     e.preventDefault();
-
-    let baseItem = null;
-
-    if (mode === "wardrobe") {
-      baseItem = items.find((item) => item.id === Number(selectedItemId));
-
-      if (!baseItem) {
-        alert("Please select an item from your wardrobe");
-        return;
-      }
-    }
-
-    if (mode === "manual" && (!name || !image)) {
-      alert("Please add item name and image");
-      return;
-    }
 
     if (!price || !description) {
       alert("Please add price and description");
       return;
     }
 
-    const newSellItem = {
-      id: Date.now(),
-      name: mode === "wardrobe" ? baseItem.name : name,
-      category: mode === "wardrobe" ? baseItem.category : category,
-      image: mode === "wardrobe" ? baseItem.image : URL.createObjectURL(image),
-      price,
-      condition,
-      description,
-      vintedLink,
-      depopLink,
-      ebayLink,
-      source: mode
-    };
+    if (mode === "wardrobe") {
+      if (!selectedItemId) {
+        alert("Please select an item from your wardrobe");
+        return;
+      }
 
-    addSellItem(newSellItem);
-    resetForm();
+      await moveWardrobeItemToSell(selectedItemId, {
+        price,
+        condition,
+        description,
+        vintedLink,
+        depopLink,
+        ebayLink
+      });
+
+      resetForm();
+      return;
+    }
+
+    if (mode === "manual") {
+      if (!name || !image) {
+        alert("Please add item name and image");
+        return;
+      }
+
+      const manualImage = await convertImageToBase64(image);
+
+      const newSellItem = {
+        name,
+        category,
+        image: manualImage,
+        price,
+        condition,
+        description,
+        vintedLink,
+        depopLink,
+        ebayLink
+      };
+
+      await addSellItem(newSellItem);
+      resetForm();
+    }
   };
 
   const copyDescription = (text) => {
@@ -82,7 +111,8 @@ function SellPage() {
   return (
     <PageLayout title="Sell">
       <p>
-        Add clothing items you want to sell and create descriptions that can be copied to Vinted, Depop or eBay.
+        Add clothing items you want to sell. Items added from Wardrobe will move
+        out of Wardrobe and stay only here until restored.
       </p>
 
       <div style={{ margin: "20px 0" }}>
@@ -320,12 +350,21 @@ function SellPage() {
 
               <br />
 
-              <button
-                onClick={() => removeSellItem(item.id)}
-                style={{ marginTop: "8px", padding: "6px 10px" }}
-              >
-                Remove
-              </button>
+              {item.source === "wardrobe" ? (
+                <button
+                  onClick={() => restoreSellItemToWardrobe(item.id)}
+                  style={{ marginTop: "8px", padding: "6px 10px" }}
+                >
+                  Restore to Wardrobe
+                </button>
+              ) : (
+                <button
+                  onClick={() => removeSellItem(item.id)}
+                  style={{ marginTop: "8px", padding: "6px 10px" }}
+                >
+                  Remove
+                </button>
+              )}
             </div>
           ))}
         </div>

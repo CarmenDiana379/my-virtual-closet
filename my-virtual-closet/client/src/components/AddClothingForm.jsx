@@ -1,10 +1,19 @@
 import { useState } from "react";
 
 function AddClothingForm({ onAddItem }) {
-
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Tops");
-  const [image, setImage] = useState(null);
+  const [image, setImage] = useState("");
+
+  const convertImageToBase64 = (file) => {
+    const reader = new FileReader();
+
+    reader.onloadend = () => {
+      setImage(reader.result);
+    };
+
+    reader.readAsDataURL(file);
+  };
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -18,14 +27,14 @@ function AddClothingForm({ onAddItem }) {
       id: Date.now(),
       name,
       category,
-      image: URL.createObjectURL(image)
+      image
     };
 
     onAddItem(newItem);
 
     setName("");
     setCategory("Tops");
-    setImage(null);
+    setImage("");
   };
 
   return (
@@ -40,28 +49,20 @@ function AddClothingForm({ onAddItem }) {
     >
       <h2>Add Clothing Item</h2>
 
-      {/* ITEM NAME */}
-
       <input
         type="text"
         placeholder="Item name"
         value={name}
-        onChange={(e) =>
-          setName(e.target.value)
-        }
+        onChange={(e) => setName(e.target.value)}
         style={{
           padding: "8px",
           marginRight: "10px"
         }}
       />
 
-      {/* CATEGORY */}
-
       <select
         value={category}
-        onChange={(e) =>
-          setCategory(e.target.value)
-        }
+        onChange={(e) => setCategory(e.target.value)}
         style={{
           padding: "8px",
           marginRight: "10px"
@@ -75,19 +76,31 @@ function AddClothingForm({ onAddItem }) {
         <option>Shoes</option>
       </select>
 
-      {/* IMAGE UPLOAD */}
-
       <input
         type="file"
         accept="image/*"
-        onChange={(e) =>
-          setImage(e.target.files[0])
-        }
+        onChange={(e) => convertImageToBase64(e.target.files[0])}
         style={{
           marginTop: "10px",
           display: "block"
         }}
       />
+
+      {image && (
+        <img
+          src={image}
+          alt="Preview"
+          style={{
+            width: "80px",
+            height: "80px",
+            objectFit: "cover",
+            marginTop: "10px",
+            border: "1px solid black"
+          }}
+        />
+      )}
+
+      <br />
 
       <button
         type="submit"
@@ -98,7 +111,6 @@ function AddClothingForm({ onAddItem }) {
       >
         Add Item
       </button>
-
     </form>
   );
 }
