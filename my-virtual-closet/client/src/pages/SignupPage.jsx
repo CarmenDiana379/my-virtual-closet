@@ -1,9 +1,25 @@
 import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 function SignupPage() {
+
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+  const navigate = useNavigate();
+
+  const handleSignup = () => {
+
+    if (!fullName || !email || !password) {
+      alert("Please fill all fields");
+      return;
+    }
+
+    // later this will connect to Firebase
+
+    navigate("/choose-style");
+  };
 
   return (
     <div
@@ -14,6 +30,8 @@ function SignupPage() {
         flexDirection: "column"
       }}
     >
+
+      {/* HEADER */}
       <div
         style={{
           padding: "20px",
@@ -23,6 +41,8 @@ function SignupPage() {
         <h2>LOGO</h2>
       </div>
 
+
+      {/* SIGNUP FORM */}
       <div
         style={{
           width: "350px",
@@ -32,6 +52,7 @@ function SignupPage() {
           textAlign: "center"
         }}
       >
+
         <h1>Create Account</h1>
 
         <input
@@ -71,13 +92,16 @@ function SignupPage() {
         />
 
         <button
+          onClick={handleSignup}
           style={{
             padding: "10px 30px"
           }}
         >
           Sign Up
         </button>
+
       </div>
+
     </div>
   );
 }
