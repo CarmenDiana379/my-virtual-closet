@@ -2,8 +2,6 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 
 import { WardrobeProvider } from "./store/WardrobeStore";
 
-import ProtectedRoute from "./components/ProtectedRoute";
-
 import HomePage from "./pages/HomePage";
 import SignupPage from "./pages/SignupPage";
 import StyleSelectionPage from "./pages/StyleSelectionPage";
@@ -16,84 +14,75 @@ import SellPage from "./pages/SellPage";
 import RecyclePage from "./pages/RecyclePage";
 import BinPage from "./pages/BinPage";
 
+import AdminDashboardPage from "./pages/AdminDashboardPage";
+import AdminRoute from "./components/AdminRoute";
+
 function App() {
   return (
     <WardrobeProvider>
       <Router>
-
         <Routes>
 
-          {/* PUBLIC */}
-          <Route path="/" element={<HomePage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="/choose-style" element={<StyleSelectionPage />} />
+          {/* PUBLIC ROUTES */}
 
-          {/* PROTECTED */}
+          <Route path="/" element={<HomePage />} />
+
+          <Route path="/signup" element={<SignupPage />} />
+
+          <Route
+            path="/choose-style"
+            element={<StyleSelectionPage />}
+          />
+
+          {/* USER ROUTES */}
+
           <Route
             path="/dashboard"
-            element={
-              <ProtectedRoute>
-                <DashboardPage />
-              </ProtectedRoute>
-            }
+            element={<DashboardPage />}
           />
 
           <Route
             path="/wardrobe-check"
-            element={
-              <ProtectedRoute>
-                <WardrobeCheckPage />
-              </ProtectedRoute>
-            }
+            element={<WardrobeCheckPage />}
           />
 
           <Route
             path="/wardrobe-planning"
-            element={
-              <ProtectedRoute>
-                <WardrobePlanningPage />
-              </ProtectedRoute>
-            }
+            element={<WardrobePlanningPage />}
           />
 
           <Route
             path="/wishlist"
-            element={
-              <ProtectedRoute>
-                <WishlistPage />
-              </ProtectedRoute>
-            }
+            element={<WishlistPage />}
           />
 
           <Route
             path="/sell"
-            element={
-              <ProtectedRoute>
-                <SellPage />
-              </ProtectedRoute>
-            }
+            element={<SellPage />}
           />
 
           <Route
             path="/recycle"
-            element={
-              <ProtectedRoute>
-                <RecyclePage />
-              </ProtectedRoute>
-            }
+            element={<RecyclePage />}
           />
 
           <Route
             path="/bin"
+            element={<BinPage />}
+          />
+
+          {/* ADMIN ROUTE (THIS IS THE NEW ONE) */}
+
+          <Route
+            path="/admin-dashboard"
             element={
-              <ProtectedRoute>
-                <BinPage />
-              </ProtectedRoute>
+              <AdminRoute>
+                <AdminDashboardPage />
+              </AdminRoute>
             }
           />
 
         </Routes>
-
       </Router>
     </WardrobeProvider>
   );
