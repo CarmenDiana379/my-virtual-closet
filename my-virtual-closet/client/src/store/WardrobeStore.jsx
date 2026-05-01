@@ -96,20 +96,26 @@ export function WardrobeProvider({ children }) {
   };
 
   const addItem = async (newItem) => {
-    if (!user) return;
+  if (!user) return;
 
-    const itemToSave = {
-      name: newItem.name,
-      category: newItem.category,
-      image: newItem.image || ""
-    };
-
-    await removeDuplicateFromBin(itemToSave.name);
-    await removeDuplicateFromSell(itemToSave.name);
-
-    const docRef = await addDoc(getUserCollection("wardrobeItems"), itemToSave);
-    setItems((prev) => [...prev, { ...itemToSave, id: docRef.id }]);
+  const itemToSave = {
+    name: newItem.name,
+    category: newItem.category,
+    image: newItem.image || "",
+    gender: newItem.gender || "Unisex",
+    sizeSystem: newItem.sizeSystem || "UK",
+    size: newItem.size || "",
+    season: newItem.season || "All seasons",
+    occasion: newItem.occasion || "Everyday"
   };
+
+  await removeDuplicateFromBin(itemToSave.name);
+  await removeDuplicateFromSell(itemToSave.name);
+
+  const docRef = await addDoc(getUserCollection("wardrobeItems"), itemToSave);
+
+  setItems((prev) => [...prev, { ...itemToSave, id: docRef.id }]);
+};
 
   const moveToBin = async (id) => {
     if (!user) return;

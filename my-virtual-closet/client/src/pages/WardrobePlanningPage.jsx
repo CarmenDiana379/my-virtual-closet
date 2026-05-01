@@ -3,13 +3,8 @@ import PageLayout from "../components/PageLayout";
 import { useWardrobe } from "../store/WardrobeStore";
 
 function WardrobePlanningPage() {
-  const {
-    items,
-    wishlistItems,
-    savedOutfits,
-    saveOutfit,
-    deleteOutfit
-  } = useWardrobe();
+  const { items, wishlistItems, savedOutfits, saveOutfit, deleteOutfit } =
+    useWardrobe();
 
   const categories = [
     "Headwear",
@@ -20,67 +15,45 @@ function WardrobePlanningPage() {
     "Shoes"
   ];
 
-  const outfitCategories = [
-    "Spring",
-    "Summer",
-    "Autumn",
-    "Winter",
-    "Job Interview",
-    "Casual Dinner",
-    "Fancy Dinner",
-    "Date",
-    "House Party",
-    "Club Night",
-    "City Trip",
-    "Resort Holiday",
-    "Ski",
-    "Beach",
-    "Everyday",
-    "Formal Event"
-  ];
-
-  const allItems = [...items, ...wishlistItems];
+  const [seasonFilter, setSeasonFilter] = useState("All");
+  const [occasionFilter, setOccasionFilter] = useState("All");
+  const [genderFilter, setGenderFilter] = useState("All");
 
   const [carouselIndexes, setCarouselIndexes] = useState({});
   const [selectedItems, setSelectedItems] = useState({});
   const [outfitName, setOutfitName] = useState("");
   const [outfitCategory, setOutfitCategory] = useState("Everyday");
 
-  const presets = {
-    Spring: { Tops: "Light", Bottoms: "Jeans", Shoes: "Sneakers" },
-    Summer: { Tops: "T-Shirt", Bottoms: "Shorts", Shoes: "Sandals" },
-    Autumn: { Jackets: "Jacket", Bottoms: "Jeans", Shoes: "Boots" },
-    Winter: { Jackets: "Coat", Accessories: "Scarf", Shoes: "Boots" },
-    "Job Interview": {
-      Jackets: "Blazer",
-      Tops: "Shirt",
-      Bottoms: "Trousers",
-      Shoes: "Shoes"
-    },
-    "Casual Dinner": { Tops: "Top", Bottoms: "Jeans", Shoes: "Boots" },
-    "Fancy Dinner": { Tops: "Elegant", Bottoms: "Trousers", Shoes: "Heels" },
-    Date: { Tops: "Stylish", Bottoms: "Jeans", Accessories: "Bag" },
-    "House Party": { Tops: "Party", Bottoms: "Jeans", Accessories: "Jewelry" },
-    "Club Night": { Tops: "Going Out", Bottoms: "Skirt", Shoes: "Heels" },
-    "City Trip": { Tops: "Casual", Bottoms: "Jeans", Shoes: "Sneakers" },
-    "Resort Holiday": { Tops: "Summer", Bottoms: "Shorts", Shoes: "Sandals" },
-    Ski: { Jackets: "Ski", Accessories: "Gloves", Shoes: "Boots" },
-    Beach: { Tops: "Swim", Bottoms: "Shorts", Accessories: "Sunglasses" },
-    Everyday: { Tops: "T-Shirt", Bottoms: "Jeans", Shoes: "Sneakers" },
-    "Formal Event": {
-      Jackets: "Blazer",
-      Tops: "Formal",
-      Bottoms: "Trousers",
-      Shoes: "Shoes"
-    }
-  };
+  const allItems = [...items, ...wishlistItems];
+
+  const filteredItems = allItems.filter((item) => {
+    const matchesSeason =
+      seasonFilter === "All" ||
+      item.season === seasonFilter ||
+      item.season === "All seasons" ||
+      !item.season;
+
+    const matchesOccasion =
+      occasionFilter === "All" ||
+      item.occasion === occasionFilter ||
+      !item.occasion;
+
+    const matchesGender =
+      genderFilter === "All" ||
+      item.gender === genderFilter ||
+      item.gender === "Unisex" ||
+      !item.gender;
+
+    return matchesSeason && matchesOccasion && matchesGender;
+  });
 
   const getCategoryItems = (category) => {
-    return allItems.filter((item) => item.category === category);
+    return filteredItems.filter((item) => item.category === category);
   };
 
   const handleArrow = (category, direction) => {
     const categoryItems = getCategoryItems(category);
+
     if (categoryItems.length === 0) return;
 
     const currentIndex = carouselIndexes[category] || 0;
@@ -100,28 +73,7 @@ function WardrobePlanningPage() {
     }));
   };
 
-  const applyPreset = (presetName) => {
-    const preset = presets[presetName];
-    const newSelection = {};
-
-    Object.entries(preset).forEach(([category, keyword]) => {
-      const categoryItems = getCategoryItems(category);
-
-      const match =
-        categoryItems.find((item) =>
-          item.name.toLowerCase().includes(keyword.toLowerCase())
-        ) || categoryItems[0];
-
-      if (match) {
-        newSelection[category] = match;
-      }
-    });
-
-    setSelectedItems(newSelection);
-    setOutfitCategory(presetName);
-  };
-
-  const handleSaveOutfit = () => {
+  const handleSaveOutfit = async () => {
     if (!outfitName) {
       alert("Please enter outfit name");
       return;
@@ -132,7 +84,7 @@ function WardrobePlanningPage() {
       return;
     }
 
-    saveOutfit(outfitName, outfitCategory, Object.values(selectedItems));
+    await saveOutfit(outfitName, outfitCategory, Object.values(selectedItems));
 
     setOutfitName("");
     setSelectedItems({});
@@ -146,62 +98,73 @@ function WardrobePlanningPage() {
   return (
     <PageLayout title="Wardrobe Planning">
       <p>
-        Mix and match your wardrobe and wishlist items, or use pre-made outfit
-        ideas by season and occasion.
+        Build outfits using wardrobe and wishlist items. Filter by season,
+        occasion and gender to make outfit planning more accurate.
       </p>
 
-      <h2>Seasonal Outfit Ideas</h2>
+      <h2>Outfit Filters</h2>
 
-      <div style={{ marginBottom: "25px" }}>
-        {["Spring", "Summer", "Autumn", "Winter"].map((season) => (
-          <button
-            key={season}
-            onClick={() => applyPreset(season)}
-            style={{
-              margin: "6px",
-              padding: "8px 16px"
-            }}
-          >
-            {season}
-          </button>
-        ))}
-      </div>
+      <div
+        style={{
+          border: "2px solid black",
+          padding: "15px",
+          maxWidth: "850px",
+          margin: "20px auto",
+          display: "flex",
+          justifyContent: "center",
+          gap: "10px",
+          flexWrap: "wrap"
+        }}
+      >
+        <select
+          value={seasonFilter}
+          onChange={(e) => setSeasonFilter(e.target.value)}
+          style={{ padding: "8px" }}
+        >
+          <option>All</option>
+          <option>Spring</option>
+          <option>Summer</option>
+          <option>Autumn</option>
+          <option>Winter</option>
+        </select>
 
-      <h2>Occasion Outfit Ideas</h2>
+        <select
+          value={occasionFilter}
+          onChange={(e) => setOccasionFilter(e.target.value)}
+          style={{ padding: "8px" }}
+        >
+          <option>All</option>
+          <option>Everyday</option>
+          <option>Job Interview</option>
+          <option>Casual Dinner</option>
+          <option>Fancy Dinner</option>
+          <option>Date</option>
+          <option>House Party</option>
+          <option>Club Night</option>
+          <option>City Trip</option>
+          <option>Resort Holiday</option>
+          <option>Ski</option>
+          <option>Beach</option>
+          <option>Formal Event</option>
+        </select>
 
-      <div style={{ marginBottom: "35px" }}>
-        {[
-          "Job Interview",
-          "Casual Dinner",
-          "Fancy Dinner",
-          "Date",
-          "House Party",
-          "Club Night",
-          "City Trip",
-          "Resort Holiday",
-          "Ski",
-          "Beach",
-          "Everyday",
-          "Formal Event"
-        ].map((occasion) => (
-          <button
-            key={occasion}
-            onClick={() => applyPreset(occasion)}
-            style={{
-              margin: "6px",
-              padding: "8px 16px"
-            }}
-          >
-            {occasion}
-          </button>
-        ))}
+        <select
+          value={genderFilter}
+          onChange={(e) => setGenderFilter(e.target.value)}
+          style={{ padding: "8px" }}
+        >
+          <option>All</option>
+          <option>Female</option>
+          <option>Male</option>
+          <option>Unisex</option>
+        </select>
       </div>
 
       <h2>Mix & Match Outfit Builder</h2>
 
       <div
         style={{
-          maxWidth: "420px",
+          maxWidth: "450px",
           margin: "30px auto",
           display: "flex",
           flexDirection: "column",
@@ -230,10 +193,7 @@ function WardrobePlanningPage() {
                 <>
                   <button
                     onClick={() => handleArrow(category, -1)}
-                    style={{
-                      marginBottom: "10px",
-                      padding: "6px 16px"
-                    }}
+                    style={{ padding: "6px 16px", marginBottom: "10px" }}
                   >
                     ↑
                   </button>
@@ -253,20 +213,20 @@ function WardrobePlanningPage() {
                     )}
 
                     <p>{currentItem.name}</p>
+                    <p>
+                      {currentItem.sizeSystem} {currentItem.size}
+                    </p>
                   </div>
 
                   <button
                     onClick={() => handleArrow(category, 1)}
-                    style={{
-                      marginTop: "10px",
-                      padding: "6px 16px"
-                    }}
+                    style={{ padding: "6px 16px", marginTop: "10px" }}
                   >
                     ↓
                   </button>
                 </>
               ) : (
-                <p>No items</p>
+                <p>No matching items</p>
               )}
             </div>
           );
@@ -318,7 +278,7 @@ function WardrobePlanningPage() {
         style={{
           border: "2px solid black",
           padding: "20px",
-          maxWidth: "600px",
+          maxWidth: "650px",
           margin: "25px auto"
         }}
       >
@@ -329,44 +289,44 @@ function WardrobePlanningPage() {
           placeholder="Outfit name"
           value={outfitName}
           onChange={(e) => setOutfitName(e.target.value)}
-          style={{
-            padding: "8px",
-            margin: "8px",
-            width: "220px"
-          }}
+          style={{ padding: "8px", margin: "8px", width: "220px" }}
         />
 
         <select
           value={outfitCategory}
           onChange={(e) => setOutfitCategory(e.target.value)}
-          style={{
-            padding: "8px",
-            margin: "8px"
-          }}
+          style={{ padding: "8px", margin: "8px" }}
         >
-          {outfitCategories.map((cat) => (
-            <option key={cat}>{cat}</option>
-          ))}
+          <option>Everyday</option>
+          <option>Spring</option>
+          <option>Summer</option>
+          <option>Autumn</option>
+          <option>Winter</option>
+          <option>Job Interview</option>
+          <option>Casual Dinner</option>
+          <option>Fancy Dinner</option>
+          <option>Date</option>
+          <option>House Party</option>
+          <option>Club Night</option>
+          <option>City Trip</option>
+          <option>Resort Holiday</option>
+          <option>Ski</option>
+          <option>Beach</option>
+          <option>Formal Event</option>
         </select>
 
         <br />
 
         <button
           onClick={handleSaveOutfit}
-          style={{
-            padding: "8px 18px",
-            margin: "8px"
-          }}
+          style={{ padding: "8px 18px", margin: "8px" }}
         >
           Save Outfit
         </button>
 
         <button
           onClick={clearOutfit}
-          style={{
-            padding: "8px 18px",
-            margin: "8px"
-          }}
+          style={{ padding: "8px 18px", margin: "8px" }}
         >
           Clear Outfit
         </button>
@@ -427,10 +387,7 @@ function WardrobePlanningPage() {
 
               <button
                 onClick={() => deleteOutfit(outfit.id)}
-                style={{
-                  marginTop: "10px",
-                  padding: "6px 12px"
-                }}
+                style={{ marginTop: "10px", padding: "6px 12px" }}
               >
                 Delete
               </button>
