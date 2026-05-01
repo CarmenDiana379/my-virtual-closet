@@ -1,24 +1,44 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { auth, db } from "../firebase";
+import { createUserWithEmailAndPassword } from "firebase/auth";
+import { doc, setDoc } from "firebase/firestore";
 
 function SignupPage() {
-
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
 
-  const handleSignup = () => {
-
+  const handleSignup = async () => {
     if (!fullName || !email || !password) {
       alert("Please fill all fields");
       return;
     }
 
-    // later this will connect to Firebase
+    try {
+      const userCredential = await createUserWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
 
-    navigate("/choose-style");
+      const user = userCredential.user;
+
+      await setDoc(doc(db, "users", user.uid), {
+        fullName,
+        email,
+        role: "user",
+        createdAt: new Date()
+      });
+
+      alert("Account created successfully");
+
+      navigate("/choose-style");
+    } catch (error) {
+      alert(error.message);
+    }
   };
 
   return (
@@ -30,8 +50,6 @@ function SignupPage() {
         flexDirection: "column"
       }}
     >
-
-      {/* HEADER */}
       <div
         style={{
           padding: "20px",
@@ -41,8 +59,6 @@ function SignupPage() {
         <h2>LOGO</h2>
       </div>
 
-
-      {/* SIGNUP FORM */}
       <div
         style={{
           width: "350px",
@@ -52,7 +68,6 @@ function SignupPage() {
           textAlign: "center"
         }}
       >
-
         <h1>Create Account</h1>
 
         <input
@@ -99,9 +114,7 @@ function SignupPage() {
         >
           Sign Up
         </button>
-
       </div>
-
     </div>
   );
 }

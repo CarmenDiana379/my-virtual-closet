@@ -1,8 +1,23 @@
 import React from "react";
+import { useNavigate } from "react-router-dom";
+import { signOut } from "firebase/auth";
+
+import { auth } from "../firebase";
 import Wardrobe from "../components/Wardrobe";
 import FeatureIcons from "../components/FeatureIcons";
 
 function DashboardPage() {
+  const navigate = useNavigate();
+
+  const handleLogout = async () => {
+    try {
+      await signOut(auth);
+      navigate("/");
+    } catch (error) {
+      alert(error.message);
+    }
+  };
+
   return (
     <div
       style={{
@@ -23,7 +38,10 @@ function DashboardPage() {
         }}
       >
         <h2>LOGO</h2>
-        <button>Logout</button>
+
+        <button onClick={handleLogout}>
+          Logout
+        </button>
       </div>
 
       {/* MAIN CONTENT */}
@@ -43,7 +61,7 @@ function DashboardPage() {
         <Wardrobe />
       </div>
 
-      {/* FEATURE BUTTONS — stays above footer */}
+      {/* FEATURE BUTTONS */}
       <div
         style={{
           display: "flex",

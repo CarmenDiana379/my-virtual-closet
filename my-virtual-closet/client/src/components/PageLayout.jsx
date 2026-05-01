@@ -1,8 +1,28 @@
 import { useNavigate } from "react-router-dom";
 import FeatureIcons from "./FeatureIcons";
 
+import { auth } from "../firebase";
+import { signOut } from "firebase/auth";
+
 function PageLayout({ title, children, showDashboardButton = true }) {
+
   const navigate = useNavigate();
+
+  const handleLogout = async () => {
+
+    try {
+
+      await signOut(auth);
+
+      navigate("/");
+
+    } catch (error) {
+
+      alert(error.message);
+
+    }
+
+  };
 
   return (
     <div
@@ -13,6 +33,7 @@ function PageLayout({ title, children, showDashboardButton = true }) {
         flexDirection: "column"
       }}
     >
+
       {/* HEADER */}
       <div
         style={{
@@ -23,14 +44,36 @@ function PageLayout({ title, children, showDashboardButton = true }) {
           alignItems: "center"
         }}
       >
+
         <h2>LOGO</h2>
 
-        {showDashboardButton && (
-          <button onClick={() => navigate("/dashboard")}>
-            Dashboard
+        <div
+          style={{
+            display: "flex",
+            gap: "10px"
+          }}
+        >
+
+          {showDashboardButton && (
+
+            <button
+              onClick={() => navigate("/dashboard")}
+            >
+              Dashboard
+            </button>
+
+          )}
+
+          <button
+            onClick={handleLogout}
+          >
+            Logout
           </button>
-        )}
+
+        </div>
+
       </div>
+
 
       {/* PAGE CONTENT */}
       <div
@@ -40,10 +83,13 @@ function PageLayout({ title, children, showDashboardButton = true }) {
           padding: "40px"
         }}
       >
+
         <h1>{title}</h1>
 
         {children}
+
       </div>
+
 
       {/* FEATURE BUTTONS */}
       <div
@@ -53,8 +99,11 @@ function PageLayout({ title, children, showDashboardButton = true }) {
           paddingBottom: "20px"
         }}
       >
+
         <FeatureIcons />
+
       </div>
+
 
       {/* FOOTER */}
       <div
@@ -65,9 +114,12 @@ function PageLayout({ title, children, showDashboardButton = true }) {
           justifyContent: "space-between"
         }}
       >
+
         <div>Facebook Instagram TikTok</div>
         <div>Contact Us | Subscribe | FAQ</div>
+
       </div>
+
     </div>
   );
 }

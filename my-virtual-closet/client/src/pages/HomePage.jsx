@@ -1,13 +1,53 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { auth, db } from "../firebase";
+import { signInWithEmailAndPassword } from "firebase/auth";
+import { doc, getDoc } from "firebase/firestore";
 
 function HomePage() {
-
   const [showLogin, setShowLogin] = useState(false);
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
 
   const navigate = useNavigate();
+
+  const handleLogin = async () => {
+    if (!email || !password) {
+      alert("Please enter email and password");
+      return;
+    }
+
+    try {
+      const userCredential = await signInWithEmailAndPassword(
+        auth,
+        email,
+        password
+      );
+
+      const user = userCredential.user;
+
+      const userDoc = await getDoc(doc(db, "users", user.uid));
+
+      if (!userDoc.exists()) {
+        alert("User profile not found");
+        return;
+      }
+
+      const userData = userDoc.data();
+
+      setShowLogin(false);
+      setEmail("");
+      setPassword("");
+
+      if (userData.role === "admin") {
+        navigate("/admin-dashboard");
+      } else {
+        navigate("/dashboard");
+      }
+    } catch (error) {
+      alert(error.message);
+    }
+  };
 
   return (
     <div
@@ -19,7 +59,6 @@ function HomePage() {
         position: "relative"
       }}
     >
-
       {/* HEADER */}
       <div
         style={{
@@ -149,7 +188,7 @@ function HomePage() {
             <h2>Login</h2>
 
             <input
-              type="text"
+              type="email"
               placeholder="Email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
@@ -172,13 +211,15 @@ function HomePage() {
               }}
             />
 
-            <button style={{ padding: "8px 20px" }}>
+            <button
+              onClick={handleLogin}
+              style={{ padding: "8px 20px" }}
+            >
               Login
             </button>
           </div>
         </div>
       )}
-
     </div>
   );
 }
