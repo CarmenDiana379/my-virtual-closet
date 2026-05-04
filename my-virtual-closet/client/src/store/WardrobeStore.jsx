@@ -73,6 +73,7 @@ export function WardrobeProvider({ children }) {
 
   const removeDuplicateFromSell = async (itemName) => {
     const duplicate = sellItems.find((item) => item.name === itemName);
+
     if (duplicate) {
       await deleteDoc(doc(db, "users", user.uid, "sellItems", duplicate.id));
       setSellItems((prev) => prev.filter((item) => item.id !== duplicate.id));
@@ -81,6 +82,7 @@ export function WardrobeProvider({ children }) {
 
   const removeDuplicateFromBin = async (itemName) => {
     const duplicate = binItems.find((item) => item.name === itemName);
+
     if (duplicate) {
       await deleteDoc(doc(db, "users", user.uid, "binItems", duplicate.id));
       setBinItems((prev) => prev.filter((item) => item.id !== duplicate.id));
@@ -89,6 +91,7 @@ export function WardrobeProvider({ children }) {
 
   const removeDuplicateFromWardrobe = async (itemName) => {
     const duplicate = items.find((item) => item.name === itemName);
+
     if (duplicate) {
       await deleteDoc(doc(db, "users", user.uid, "wardrobeItems", duplicate.id));
       setItems((prev) => prev.filter((item) => item.id !== duplicate.id));
@@ -96,26 +99,25 @@ export function WardrobeProvider({ children }) {
   };
 
   const addItem = async (newItem) => {
-  if (!user) return;
+    if (!user) return;
 
-  const itemToSave = {
-    name: newItem.name,
-    category: newItem.category,
-    image: newItem.image || "",
-    gender: newItem.gender || "Unisex",
-    sizeSystem: newItem.sizeSystem || "UK",
-    size: newItem.size || "",
-    season: newItem.season || "All seasons",
-    occasion: newItem.occasion || "Everyday"
+    const itemToSave = {
+      name: newItem.name,
+      category: newItem.category,
+      image: newItem.image || "",
+      gender: newItem.gender || "Unisex",
+      sizeSystem: newItem.sizeSystem || "UK",
+      size: newItem.size || "",
+      season: newItem.season || "All seasons",
+      occasion: newItem.occasion || "Everyday"
+    };
+
+    await removeDuplicateFromBin(itemToSave.name);
+    await removeDuplicateFromSell(itemToSave.name);
+
+    const docRef = await addDoc(getUserCollection("wardrobeItems"), itemToSave);
+    setItems((prev) => [...prev, { ...itemToSave, id: docRef.id }]);
   };
-
-  await removeDuplicateFromBin(itemToSave.name);
-  await removeDuplicateFromSell(itemToSave.name);
-
-  const docRef = await addDoc(getUserCollection("wardrobeItems"), itemToSave);
-
-  setItems((prev) => [...prev, { ...itemToSave, id: docRef.id }]);
-};
 
   const moveToBin = async (id) => {
     if (!user) return;
@@ -130,6 +132,11 @@ export function WardrobeProvider({ children }) {
       name: item.name,
       category: item.category,
       image: item.image || "",
+      gender: item.gender || "Unisex",
+      sizeSystem: item.sizeSystem || "UK",
+      size: item.size || "",
+      season: item.season || "All seasons",
+      occasion: item.occasion || "Everyday",
       movedFrom: "wardrobe"
     };
 
@@ -168,7 +175,12 @@ export function WardrobeProvider({ children }) {
     const wardrobeItem = {
       name: item.name,
       category: item.category,
-      image: item.image || ""
+      image: item.image || "",
+      gender: item.gender || "Unisex",
+      sizeSystem: item.sizeSystem || "UK",
+      size: item.size || "",
+      season: item.season || "All seasons",
+      occasion: item.occasion || "Everyday"
     };
 
     const docRef = await addDoc(getUserCollection("wardrobeItems"), wardrobeItem);
@@ -193,7 +205,12 @@ export function WardrobeProvider({ children }) {
       image: item.image || "",
       productLink: item.productLink || "",
       shopName: item.shopName || "",
-      source: item.source || ""
+      source: item.source || "",
+      gender: item.gender || "Unisex",
+      sizeSystem: item.sizeSystem || "UK",
+      size: item.size || "",
+      season: item.season || "All seasons",
+      occasion: item.occasion || "Everyday"
     };
 
     const docRef = await addDoc(getUserCollection("wishlistItems"), itemToSave);
@@ -214,7 +231,12 @@ export function WardrobeProvider({ children }) {
     await addItem({
       name: item.name,
       category: item.category,
-      image: item.image || ""
+      image: item.image || "",
+      gender: item.gender || "Unisex",
+      sizeSystem: item.sizeSystem || "UK",
+      size: item.size || "",
+      season: item.season || "All seasons",
+      occasion: item.occasion || "Everyday"
     });
   };
 
@@ -231,6 +253,11 @@ export function WardrobeProvider({ children }) {
       name: item.name,
       category: item.category,
       image: item.image || "",
+      gender: item.gender || "Unisex",
+      sizeSystem: item.sizeSystem || "UK",
+      size: item.size || "",
+      season: item.season || "All seasons",
+      occasion: item.occasion || "Everyday",
       price: sellingDetails.price,
       condition: sellingDetails.condition,
       description: sellingDetails.description,
@@ -288,7 +315,12 @@ export function WardrobeProvider({ children }) {
     const wardrobeItem = {
       name: item.name,
       category: item.category,
-      image: item.image || ""
+      image: item.image || "",
+      gender: item.gender || "Unisex",
+      sizeSystem: item.sizeSystem || "UK",
+      size: item.size || "",
+      season: item.season || "All seasons",
+      occasion: item.occasion || "Everyday"
     };
 
     const docRef = await addDoc(getUserCollection("wardrobeItems"), wardrobeItem);
@@ -331,7 +363,7 @@ export function WardrobeProvider({ children }) {
     const newOutfit = {
       name,
       outfitCategory,
-      items: outfitItems
+      items: Array.isArray(outfitItems) ? outfitItems : Object.values(outfitItems)
     };
 
     const docRef = await addDoc(getUserCollection("savedOutfits"), newOutfit);

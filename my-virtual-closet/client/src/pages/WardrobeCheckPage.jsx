@@ -3,9 +3,11 @@ import PageLayout from "../components/PageLayout";
 import WardrobeItem from "../components/WardrobeItem";
 import AddClothingForm from "../components/AddClothingForm";
 import { useWardrobe } from "../store/WardrobeStore";
+import { useTheme } from "../store/ThemeStore";
 
 function WardrobeCheckPage() {
   const { items, addItem, moveToBin } = useWardrobe();
+  const { theme } = useTheme();
 
   const categories = [
     "Headwear",
@@ -74,8 +76,10 @@ function WardrobeCheckPage() {
             onClick={() => setSelectedCategory(cat)}
             style={{
               padding: "8px 16px",
-              border: "2px solid black",
-              background: selectedCategory === cat ? "#ddd" : "white"
+              border: `2px solid ${theme.border}`,
+              background: selectedCategory === cat ? theme.accent : theme.card,
+              color: theme.text,
+              fontWeight: "bold"
             }}
           >
             {cat}
@@ -87,7 +91,9 @@ function WardrobeCheckPage() {
 
       <div
         style={{
-          border: "2px solid black",
+          border: `3px solid ${theme.border}`,
+          background: theme.card,
+          color: theme.text,
           padding: "15px",
           maxWidth: "900px",
           margin: "0 auto 30px",
@@ -100,7 +106,12 @@ function WardrobeCheckPage() {
         <select
           value={genderFilter}
           onChange={(e) => setGenderFilter(e.target.value)}
-          style={{ padding: "8px" }}
+          style={{
+            padding: "8px",
+            background: theme.accent,
+            color: theme.text,
+            border: `2px solid ${theme.border}`
+          }}
         >
           <option>All</option>
           <option>Female</option>
@@ -111,7 +122,12 @@ function WardrobeCheckPage() {
         <select
           value={sizeSystemFilter}
           onChange={(e) => setSizeSystemFilter(e.target.value)}
-          style={{ padding: "8px" }}
+          style={{
+            padding: "8px",
+            background: theme.accent,
+            color: theme.text,
+            border: `2px solid ${theme.border}`
+          }}
         >
           <option>All</option>
           <option>UK</option>
@@ -123,7 +139,12 @@ function WardrobeCheckPage() {
         <select
           value={seasonFilter}
           onChange={(e) => setSeasonFilter(e.target.value)}
-          style={{ padding: "8px" }}
+          style={{
+            padding: "8px",
+            background: theme.accent,
+            color: theme.text,
+            border: `2px solid ${theme.border}`
+          }}
         >
           <option>All</option>
           <option>Spring</option>
@@ -135,7 +156,12 @@ function WardrobeCheckPage() {
         <select
           value={occasionFilter}
           onChange={(e) => setOccasionFilter(e.target.value)}
-          style={{ padding: "8px" }}
+          style={{
+            padding: "8px",
+            background: theme.accent,
+            color: theme.text,
+            border: `2px solid ${theme.border}`
+          }}
         >
           <option>All</option>
           <option>Everyday</option>

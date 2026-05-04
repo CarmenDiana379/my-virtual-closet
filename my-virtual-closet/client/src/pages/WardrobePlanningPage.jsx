@@ -18,6 +18,7 @@ function WardrobePlanningPage() {
   const [seasonFilter, setSeasonFilter] = useState("All");
   const [occasionFilter, setOccasionFilter] = useState("All");
   const [genderFilter, setGenderFilter] = useState("All");
+  const [savedFilter, setSavedFilter] = useState("All");
 
   const [carouselIndexes, setCarouselIndexes] = useState({});
   const [selectedItems, setSelectedItems] = useState({});
@@ -46,6 +47,11 @@ function WardrobePlanningPage() {
 
     return matchesSeason && matchesOccasion && matchesGender;
   });
+
+  const filteredSavedOutfits =
+    savedFilter === "All"
+      ? savedOutfits
+      : savedOutfits.filter((outfit) => outfit.outfitCategory === savedFilter);
 
   const getCategoryItems = (category) => {
     return filteredItems.filter((item) => item.category === category);
@@ -334,8 +340,32 @@ function WardrobePlanningPage() {
 
       <h2>Saved Outfits</h2>
 
-      {savedOutfits.length === 0 ? (
-        <p>No saved outfits yet.</p>
+      <select
+        value={savedFilter}
+        onChange={(e) => setSavedFilter(e.target.value)}
+        style={{ padding: "8px", marginBottom: "20px" }}
+      >
+        <option>All</option>
+        <option>Everyday</option>
+        <option>Spring</option>
+        <option>Summer</option>
+        <option>Autumn</option>
+        <option>Winter</option>
+        <option>Job Interview</option>
+        <option>Casual Dinner</option>
+        <option>Fancy Dinner</option>
+        <option>Date</option>
+        <option>House Party</option>
+        <option>Club Night</option>
+        <option>City Trip</option>
+        <option>Resort Holiday</option>
+        <option>Ski</option>
+        <option>Beach</option>
+        <option>Formal Event</option>
+      </select>
+
+      {filteredSavedOutfits.length === 0 ? (
+        <p>No saved outfits match this filter.</p>
       ) : (
         <div
           style={{
@@ -346,7 +376,7 @@ function WardrobePlanningPage() {
             margin: "30px auto"
           }}
         >
-          {savedOutfits.map((outfit) => (
+          {filteredSavedOutfits.map((outfit) => (
             <div
               key={outfit.id}
               style={{

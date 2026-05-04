@@ -1,9 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useTheme } from "../store/ThemeStore";
 
 function StyleSelectionPage() {
-
   const navigate = useNavigate();
+  const { saveTheme } = useTheme();
 
   const [selectedStyle, setSelectedStyle] = useState(null);
 
@@ -20,15 +21,9 @@ function StyleSelectionPage() {
     "Smart / Professional"
   ];
 
-  const handleStyleSelect = (style) => {
-
+  const handleStyleSelect = async (style) => {
     setSelectedStyle(style);
-
-    console.log("Selected style:", style);
-
-    // Later → save to Firestore
-    // For now → go to dashboard
-
+    await saveTheme(style);
     navigate("/dashboard");
   };
 
@@ -41,8 +36,6 @@ function StyleSelectionPage() {
         flexDirection: "column"
       }}
     >
-
-      {/* NAVBAR */}
       <div
         style={{
           padding: "20px",
@@ -59,8 +52,6 @@ function StyleSelectionPage() {
         </button>
       </div>
 
-
-      {/* TITLE */}
       <div
         style={{
           textAlign: "center",
@@ -69,13 +60,9 @@ function StyleSelectionPage() {
       >
         <h1>Choose your style</h1>
 
-        <p>
-          Choose the style that best represents your wardrobe
-        </p>
+        <p>Choose the style that best represents your wardrobe</p>
       </div>
 
-
-      {/* BIG STYLE CONTAINER */}
       <div
         style={{
           width: "85%",
@@ -86,8 +73,6 @@ function StyleSelectionPage() {
           maxHeight: "520px"
         }}
       >
-
-        {/* GRID */}
         <div
           style={{
             display: "grid",
@@ -95,17 +80,8 @@ function StyleSelectionPage() {
             gap: "50px"
           }}
         >
-
           {styles.map((style, index) => (
-
-            <div
-              key={index}
-              style={{
-                textAlign: "center"
-              }}
-            >
-
-              {/* STYLE IMAGE BOX */}
+            <div key={index} style={{ textAlign: "center" }}>
               <div
                 style={{
                   height: "260px",
@@ -120,7 +96,6 @@ function StyleSelectionPage() {
                   backgroundColor: "#f2f2f2"
                 }}
               >
-                {/* Placeholder text */}
                 <span>{style} Preview</span>
               </div>
 
@@ -135,53 +110,10 @@ function StyleSelectionPage() {
               >
                 Select
               </button>
-
             </div>
-
           ))}
-
-        </div>
-
-      </div>
-
-
-      {/* FEATURE BUTTON ROW */}
-      <div
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: "40px",
-          padding: "25px 0"
-        }}
-      >
-        <p>Wardrobe Check</p>
-        <p>Wardrobe Planning</p>
-        <p>Wishlist</p>
-        <p>Sell</p>
-        <p>Recycle</p>
-        <p>Bin</p>
-      </div>
-
-
-      {/* FOOTER */}
-      <div
-        style={{
-          marginTop: "auto",
-          borderTop: "1px solid black",
-          padding: "15px 20px",
-          display: "flex",
-          justifyContent: "space-between"
-        }}
-      >
-        <div>
-          Facebook Instagram TikTok
-        </div>
-
-        <div>
-          Contact Us | Subscribe | FAQ
         </div>
       </div>
-
     </div>
   );
 }

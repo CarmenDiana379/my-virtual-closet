@@ -1,11 +1,16 @@
 import { useState } from "react";
 import { useWardrobe } from "../store/WardrobeStore";
+import { useTheme } from "../store/ThemeStore";
 
 function Wardrobe() {
-  const { items } = useWardrobe();
+  const { items, saveOutfit } = useWardrobe();
+  const { theme, selectedTheme } = useTheme();
 
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState("Two-piece");
+  const [selectedOutfit, setSelectedOutfit] = useState({});
+  const [outfitName, setOutfitName] = useState("");
+  const [outfitCategory, setOutfitCategory] = useState("Casual");
 
   const [indexes, setIndexes] = useState({
     Headwear: 0,
@@ -16,6 +21,30 @@ function Wardrobe() {
     Accessories: 0,
     Jackets: 0
   });
+
+  const getDoorBackground = () => {
+    if (selectedTheme === "Y2K") {
+      return "linear-gradient(135deg, #ffb3f1, #b3f0ff, #ffff66)";
+    }
+
+    if (selectedTheme === "Gothic") {
+      return "radial-gradient(circle at top, #3b0a45, #000000 65%)";
+    }
+
+    if (selectedTheme === "Scene") {
+      return "repeating-linear-gradient(45deg, #00ff99 0px, #00ff99 14px, #ff00ff 14px, #ff00ff 28px)";
+    }
+
+    if (selectedTheme === "Vintage Revival") {
+      return "linear-gradient(90deg, #8b5a2b, #c49a6c, #8b5a2b)";
+    }
+
+    if (selectedTheme === "Preppy") {
+      return "repeating-linear-gradient(90deg, #dbeafe 0px, #dbeafe 20px, #ffffff 20px, #ffffff 40px)";
+    }
+
+    return theme.card;
+  };
 
   const getItemsByCategory = (category) => {
     if (category === "Neckwear") {
@@ -49,10 +78,7 @@ function Wardrobe() {
       if (newIndex < 0) newIndex = categoryItems.length - 1;
       if (newIndex >= categoryItems.length) newIndex = 0;
 
-      return {
-        ...prev,
-        [category]: newIndex
-      };
+      return { ...prev, [category]: newIndex };
     });
   };
 
@@ -79,24 +105,66 @@ function Wardrobe() {
     ];
   };
 
-  const renderRow = (category, label) => {
+  const addToOutfit = (section, item) => {
+    setSelectedOutfit((prev) => ({
+      ...prev,
+      [section]: item
+    }));
+  };
+
+  const clearOutfit = () => {
+    setSelectedOutfit({});
+    setOutfitName("");
+    setOutfitCategory("Casual");
+  };
+
+  const handleSaveOutfit = async () => {
+    if (!outfitName) {
+      alert("Please give your outfit a name");
+      return;
+    }
+
+    if (Object.keys(selectedOutfit).length === 0) {
+      alert("No items selected");
+      return;
+    }
+
+    await saveOutfit(outfitName, outfitCategory, Object.values(selectedOutfit));
+
+    alert("Outfit saved!");
+
+    setOutfitName("");
+    setOutfitCategory("Casual");
+    setSelectedOutfit({});
+  };
+
+  const buttonStyle = {
+    background: theme.accent,
+    border: `2px solid ${theme.border}`,
+    color: theme.text,
+    borderRadius: theme.radius,
+    fontWeight: "bold",
+    cursor: "pointer"
+  };
+
+  const renderRow = (category, label, outfitKey) => {
     const visibleItems = getVisibleItems(category);
 
     return (
       <div
         style={{
-          borderBottom: "2px solid black",
-          padding: "5px 0"
+          borderBottom: `2px solid ${theme.border}`,
+          padding: "4px 0"
         }}
       >
         <strong
           style={{
             display: "block",
-            marginBottom: "3px",
+            marginBottom: "2px",
             fontSize: "12px"
           }}
         >
-          {label}
+          {theme.symbol} {label}
         </strong>
 
         <div
@@ -104,8 +172,8 @@ function Wardrobe() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            gap: "10px",
-            minHeight: "82px"
+            gap: "8px",
+            minHeight: "72px"
           }}
         >
           <button
@@ -113,6 +181,7 @@ function Wardrobe() {
               e.stopPropagation();
               moveCarousel(category, -1);
             }}
+            style={buttonStyle}
           >
             ←
           </button>
@@ -120,14 +189,16 @@ function Wardrobe() {
           {visibleItems.length === 0 ? (
             <div
               style={{
-                width: "280px",
-                height: "52px",
-                border: "1px dashed black",
+                width: "250px",
+                height: "45px",
+                border: `1px dashed ${theme.border}`,
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                background: "white",
-                fontSize: "12px"
+                background: theme.card,
+                color: theme.text,
+                fontSize: "12px",
+                borderRadius: theme.radius
               }}
             >
               No items yet
@@ -138,31 +209,49 @@ function Wardrobe() {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                gap: "10px",
-                width: "430px"
+                gap: "8px",
+                width: "380px"
               }}
             >
               {visibleItems.map(({ item, position }) => (
                 <div
                   key={`${category}-${item.id}-${position}`}
+                  onClick={(e) => {
+                    e.stopPropagation();
+
+                    if (position === "center") {
+                      addToOutfit(outfitKey, item);
+                    }
+                  }}
                   style={{
                     border:
                       position === "center"
-                        ? "3px solid black"
-                        : "1px solid black",
-                    width: position === "center" ? "105px" : "76px",
-                    height: position === "center" ? "86px" : "66px",
+                        ? `3px solid ${theme.border}`
+                        : `1px solid ${theme.border}`,
+                    width: position === "center" ? "95px" : "68px",
+                    height: position === "center" ? "78px" : "58px",
                     flexShrink: 0,
                     display: "flex",
                     flexDirection: "column",
                     alignItems: "center",
                     justifyContent: "center",
-                    background: "white",
-                    padding: "4px",
+                    background: theme.card,
+                    color: theme.text,
+                    padding: "3px",
                     opacity: position === "center" ? 1 : 0.45,
                     transform:
                       position === "center" ? "scale(1.05)" : "scale(0.9)",
-                    boxSizing: "border-box"
+                    boxSizing: "border-box",
+                    cursor: position === "center" ? "pointer" : "default",
+                    borderRadius: theme.radius,
+                    boxShadow:
+                      position === "center" && selectedTheme === "Y2K"
+                        ? "0 0 12px #ff00cc"
+                        : position === "center" && selectedTheme === "Gothic"
+                        ? "0 0 10px #8b0000"
+                        : position === "center" && selectedTheme === "Scene"
+                        ? "0 0 10px #00ccff"
+                        : "none"
                   }}
                 >
                   {item.image && (
@@ -170,27 +259,24 @@ function Wardrobe() {
                       src={item.image}
                       alt={item.name}
                       style={{
-                        width: position === "center" ? "48px" : "34px",
-                        height: position === "center" ? "48px" : "34px",
+                        width: position === "center" ? "43px" : "30px",
+                        height: position === "center" ? "43px" : "30px",
                         objectFit: "cover",
-                        border: "1px solid black",
-                        marginBottom: "2px"
+                        border: `1px solid ${theme.border}`,
+                        marginBottom: "2px",
+                        borderRadius: theme.radius
                       }}
                     />
                   )}
 
                   <strong
                     style={{
-                      fontSize: position === "center" ? "9px" : "8px",
+                      fontSize: position === "center" ? "8px" : "7px",
                       textAlign: "center"
                     }}
                   >
                     {item.name}
                   </strong>
-
-                  <span style={{ fontSize: "8px" }}>
-                    {item.sizeSystem} {item.size}
-                  </span>
                 </div>
               ))}
             </div>
@@ -201,6 +287,7 @@ function Wardrobe() {
               e.stopPropagation();
               moveCarousel(category, 1);
             }}
+            style={buttonStyle}
           >
             →
           </button>
@@ -213,72 +300,221 @@ function Wardrobe() {
     <div
       onClick={() => setIsOpen(!isOpen)}
       style={{
-        width: "82%",
-        maxWidth: "1150px",
+        width: "90%",
+        maxWidth: "1250px",
         margin: "20px auto",
-        border: "4px solid black",
-        background: "#f8f8f8",
+        border: `4px solid ${theme.border}`,
+        background: theme.pattern !== "none" ? theme.pattern : theme.background,
+        backgroundSize: "40px 40px",
+        color: theme.text,
         boxSizing: "border-box",
         position: "relative",
         overflow: "hidden",
-        cursor: "pointer"
+        cursor: "pointer",
+        borderRadius: theme.radius,
+        boxShadow:
+          selectedTheme === "Y2K"
+            ? "0 0 25px #ff00cc"
+            : selectedTheme === "Gothic"
+            ? "0 0 22px #8b0000"
+            : selectedTheme === "Scene"
+            ? "0 0 22px #00ccff"
+            : "none"
       }}
     >
       <div
         style={{
-          padding: "12px"
+          padding: "12px",
+          display: "grid",
+          gridTemplateColumns: "2fr 1fr",
+          gap: "18px"
         }}
       >
-        <h2 style={{ margin: "0 0 8px 0", fontSize: "20px" }}>
-          Dress-Up Wardrobe
-        </h2>
+        <div
+          style={{
+            background: theme.card,
+            border: `3px solid ${theme.border}`,
+            borderRadius: theme.radius,
+            padding: "10px"
+          }}
+        >
+          <h2 style={{ margin: "0 0 8px 0", fontSize: "20px" }}>
+            {theme.symbol} Dress-Up Wardrobe {theme.symbol}
+          </h2>
 
-        <div style={{ marginBottom: "8px" }}>
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setMode("Two-piece");
-            }}
-            style={{
-              marginRight: "10px",
-              padding: "5px 10px",
-              background: mode === "Two-piece" ? "#ddd" : "white"
-            }}
-          >
-            Tops + Bottoms
-          </button>
+          <div style={{ marginBottom: "8px" }}>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setMode("Two-piece");
+              }}
+              style={{
+                ...buttonStyle,
+                marginRight: "10px",
+                padding: "5px 10px",
+                background: mode === "Two-piece" ? theme.accent : theme.card
+              }}
+            >
+              Tops + Bottoms
+            </button>
 
-          <button
-            onClick={(e) => {
-              e.stopPropagation();
-              setMode("One-piece");
-            }}
-            style={{
-              padding: "5px 10px",
-              background: mode === "One-piece" ? "#ddd" : "white"
-            }}
-          >
-            Dresses / One-pieces
-          </button>
+            <button
+              onClick={(e) => {
+                e.stopPropagation();
+                setMode("One-piece");
+              }}
+              style={{
+                ...buttonStyle,
+                padding: "5px 10px",
+                background: mode === "One-piece" ? theme.accent : theme.card
+              }}
+            >
+              Dresses / One-pieces
+            </button>
+          </div>
+
+          {renderRow("Headwear", "Headwear", "Headwear")}
+          {renderRow("Neckwear", "Necklaces / Scarves", "Neckwear")}
+
+          {mode === "Two-piece" && (
+            <>
+              {renderRow("Tops", "Tops", "Top")}
+              {renderRow("Bottoms", "Bottoms", "Bottom")}
+            </>
+          )}
+
+          {mode === "One-piece" &&
+            renderRow("Tops", "Dresses / One-pieces", "One-piece")}
+
+          {renderRow("Shoes", "Shoes", "Shoes")}
+          {renderRow("Accessories", "Extra Accessories", "Accessories")}
+          {renderRow("Jackets", "Jackets", "Jacket")}
         </div>
 
-        {renderRow("Headwear", "Headwear")}
-        {renderRow("Neckwear", "Necklaces / Scarves")}
+        <div
+          onClick={(e) => e.stopPropagation()}
+          style={{
+            border: `3px solid ${theme.border}`,
+            background: theme.card,
+            color: theme.text,
+            padding: "12px",
+            textAlign: "center",
+            borderRadius: theme.radius
+          }}
+        >
+          <h2 style={{ marginTop: 0 }}>
+            {theme.symbol} Current Outfit
+          </h2>
 
-        {mode === "Two-piece" && (
-          <>
-            {renderRow("Tops", "Tops")}
-            {renderRow("Bottoms", "Bottoms")}
-          </>
-        )}
+          {Object.keys(selectedOutfit).length === 0 ? (
+            <p>Click a centre item to add it here.</p>
+          ) : (
+            Object.entries(selectedOutfit).map(([section, item]) => (
+              <div
+                key={section}
+                style={{
+                  borderBottom: `1px solid ${theme.border}`,
+                  padding: "8px 0"
+                }}
+              >
+                <strong>{section}</strong>
 
-        {mode === "One-piece" && renderRow("Tops", "Dresses / One-pieces")}
+                <br />
 
-        {renderRow("Shoes", "Shoes")}
-        {renderRow("Accessories", "Extra Accessories")}
-        {renderRow("Jackets", "Jackets")}
+                {item.image && (
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    style={{
+                      width: "70px",
+                      height: "70px",
+                      objectFit: "cover",
+                      border: `1px solid ${theme.border}`,
+                      marginTop: "5px",
+                      borderRadius: theme.radius
+                    }}
+                  />
+                )}
+
+                <p style={{ margin: "4px 0" }}>{item.name}</p>
+              </div>
+            ))
+          )}
+
+          <input
+            type="text"
+            placeholder="Outfit name"
+            value={outfitName}
+            onChange={(e) => setOutfitName(e.target.value)}
+            style={{
+              width: "90%",
+              padding: "6px",
+              marginTop: "10px",
+              background: theme.background,
+              color: theme.text,
+              border: `2px solid ${theme.border}`,
+              borderRadius: theme.radius
+            }}
+          />
+
+          <select
+            value={outfitCategory}
+            onChange={(e) => setOutfitCategory(e.target.value)}
+            style={{
+              marginTop: "8px",
+              padding: "6px",
+              background: theme.background,
+              color: theme.text,
+              border: `2px solid ${theme.border}`,
+              borderRadius: theme.radius
+            }}
+          >
+            <option>Casual</option>
+            <option>Formal</option>
+            <option>Sport</option>
+            <option>Party</option>
+            <option>Everyday</option>
+            <option>Job Interview</option>
+            <option>Casual Dinner</option>
+            <option>Fancy Dinner</option>
+            <option>Date</option>
+            <option>House Party</option>
+            <option>Club Night</option>
+            <option>City Trip</option>
+            <option>Resort Holiday</option>
+            <option>Ski</option>
+            <option>Beach</option>
+            <option>Formal Event</option>
+          </select>
+
+          <br />
+
+          <button
+            onClick={handleSaveOutfit}
+            style={{
+              ...buttonStyle,
+              marginTop: "10px",
+              padding: "6px 12px"
+            }}
+          >
+            Save Outfit
+          </button>
+
+          <button
+            onClick={clearOutfit}
+            style={{
+              ...buttonStyle,
+              marginTop: "8px",
+              marginLeft: "8px",
+              padding: "6px 12px"
+            }}
+          >
+            Clear Outfit
+          </button>
+        </div>
       </div>
 
+      {/* LEFT SLIDING DOOR */}
       <div
         style={{
           position: "absolute",
@@ -286,8 +522,8 @@ function Wardrobe() {
           top: "0",
           width: "50%",
           height: "100%",
-          background: "white",
-          borderRight: "3px solid black",
+          background: getDoorBackground(),
+          borderRight: `4px solid ${theme.border}`,
           transition: "0.7s",
           zIndex: 5,
           boxSizing: "border-box"
@@ -297,24 +533,35 @@ function Wardrobe() {
           style={{
             width: "100%",
             height: "100%",
-            border: "2px solid black",
+            border: `3px solid ${theme.border}`,
             boxSizing: "border-box",
             display: "flex",
             justifyContent: "flex-end",
             alignItems: "center",
-            paddingRight: "30px"
+            paddingRight: "30px",
+            fontSize: "45px"
           }}
         >
+          {selectedTheme === "Gothic" && "🕸"}
+          {selectedTheme === "Y2K" && "✦"}
+          {selectedTheme === "Scene" && "⚡"}
+          {selectedTheme !== "Gothic" &&
+            selectedTheme !== "Y2K" &&
+            selectedTheme !== "Scene" &&
+            theme.symbol}
+
           <div
             style={{
               width: "6px",
               height: "80px",
-              background: "black"
+              background: theme.border,
+              marginLeft: "25px"
             }}
           />
         </div>
       </div>
 
+      {/* RIGHT SLIDING DOOR */}
       <div
         style={{
           position: "absolute",
@@ -322,8 +569,8 @@ function Wardrobe() {
           top: "0",
           width: "50%",
           height: "100%",
-          background: "white",
-          borderLeft: "3px solid black",
+          background: getDoorBackground(),
+          borderLeft: `4px solid ${theme.border}`,
           transition: "0.7s",
           zIndex: 5,
           boxSizing: "border-box"
@@ -333,21 +580,31 @@ function Wardrobe() {
           style={{
             width: "100%",
             height: "100%",
-            border: "2px solid black",
+            border: `3px solid ${theme.border}`,
             boxSizing: "border-box",
             display: "flex",
             justifyContent: "flex-start",
             alignItems: "center",
-            paddingLeft: "30px"
+            paddingLeft: "30px",
+            fontSize: "45px"
           }}
         >
           <div
             style={{
               width: "6px",
               height: "80px",
-              background: "black"
+              background: theme.border,
+              marginRight: "25px"
             }}
           />
+
+          {selectedTheme === "Gothic" && "🦇"}
+          {selectedTheme === "Y2K" && "✦"}
+          {selectedTheme === "Scene" && "⚡"}
+          {selectedTheme !== "Gothic" &&
+            selectedTheme !== "Y2K" &&
+            selectedTheme !== "Scene" &&
+            theme.symbol}
         </div>
       </div>
     </div>

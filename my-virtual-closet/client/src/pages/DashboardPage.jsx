@@ -5,9 +5,11 @@ import { signOut } from "firebase/auth";
 import { auth } from "../firebase";
 import Wardrobe from "../components/Wardrobe";
 import FeatureIcons from "../components/FeatureIcons";
+import { useTheme } from "../store/ThemeStore";
 
 function DashboardPage() {
   const navigate = useNavigate();
+  const { theme, selectedTheme } = useTheme();
 
   const handleLogout = async () => {
     try {
@@ -21,47 +23,82 @@ function DashboardPage() {
   return (
     <div
       style={{
-        fontFamily: "Arial, sans-serif",
+        fontFamily: theme.font,
         minHeight: "100vh",
         display: "flex",
-        flexDirection: "column"
+        flexDirection: "column",
+        background: theme.pattern !== "none" ? theme.pattern : theme.background,
+        backgroundSize: "40px 40px",
+        color: theme.text
       }}
     >
-      {/* HEADER */}
       <div
         style={{
           padding: "20px",
-          borderBottom: "1px solid black",
+          borderBottom: `4px solid ${theme.border}`,
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center"
+          alignItems: "center",
+          background: theme.card
         }}
       >
-        <h2>LOGO</h2>
+        <div>
+          <h2 style={{ margin: 0 }}>
+            {theme.symbol} LOGO {theme.symbol}
+          </h2>
+          <small>{selectedTheme}</small>
+        </div>
 
-        <button onClick={handleLogout}>
+        <button
+          onClick={handleLogout}
+          style={{
+            background: theme.accent,
+            border: `2px solid ${theme.border}`,
+            color: theme.text,
+            borderRadius: theme.radius,
+            padding: "8px 14px",
+            fontWeight: "bold"
+          }}
+        >
           Logout
         </button>
       </div>
 
-      {/* MAIN CONTENT */}
       <div
         style={{
           flex: 1,
-          display: "flex",
-          flexDirection: "column",
-          justifyContent: "center"
+          padding: "30px",
+          textAlign: "center"
         }}
       >
-        <div style={{ textAlign: "center" }}>
-          <h1>Welcome to your wardrobe [ User Name ]!</h1>
-          <p>Create outfits by mixing items in your wardrobe</p>
-        </div>
+        <div
+          style={{
+            border: `4px solid ${theme.border}`,
+            background: theme.card,
+            borderRadius: theme.radius,
+            padding: "20px",
+            maxWidth: "1400px",
+            margin: "0 auto",
+            boxShadow:
+              selectedTheme === "Y2K"
+                ? "0 0 25px pink"
+                : selectedTheme === "Gothic"
+                ? "0 0 20px red"
+                : selectedTheme === "Scene"
+                ? "0 0 20px #00ccff"
+                : "none"
+          }}
+        >
+          <h1>
+            {theme.symbol} Welcome to your wardrobe {theme.symbol}
+          </h1>
 
-        <Wardrobe />
+          <p>Create outfits by mixing items in your wardrobe</p>
+
+          <Wardrobe />
+        </div>
       </div>
 
-      {/* FEATURE BUTTONS */}
       <div
         style={{
           display: "flex",
@@ -72,17 +109,17 @@ function DashboardPage() {
         <FeatureIcons />
       </div>
 
-      {/* FOOTER */}
       <div
         style={{
-          borderTop: "1px solid black",
+          borderTop: `4px solid ${theme.border}`,
           padding: "15px 20px",
           display: "flex",
-          justifyContent: "space-between"
+          justifyContent: "space-between",
+          background: theme.card
         }}
       >
-        <div>Facebook Instagram TikTok</div>
-        <div>Contact Us | Subscribe | FAQ</div>
+        <div>{theme.symbol} Facebook Instagram TikTok</div>
+        <div>Contact Us | Subscribe | FAQ {theme.symbol}</div>
       </div>
     </div>
   );
