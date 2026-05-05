@@ -49,19 +49,35 @@ function DashboardPage() {
           <small>{selectedTheme}</small>
         </div>
 
-        <button
-          onClick={handleLogout}
-          style={{
-            background: theme.accent,
-            border: `2px solid ${theme.border}`,
-            color: theme.text,
-            borderRadius: theme.radius,
-            padding: "8px 14px",
-            fontWeight: "bold"
-          }}
-        >
-          Logout
-        </button>
+        <div style={{ display: "flex", gap: "10px" }}>
+  <button
+    onClick={() => navigate("/choose-style")}
+    style={{
+      background: theme.accent,
+      border: `2px solid ${theme.border}`,
+      color: theme.text,
+      borderRadius: theme.radius,
+      padding: "8px 14px",
+      fontWeight: "bold"
+    }}
+  >
+    Change Style
+  </button>
+
+  <button
+    onClick={handleLogout}
+    style={{
+      background: theme.accent,
+      border: `2px solid ${theme.border}`,
+      color: theme.text,
+      borderRadius: theme.radius,
+      padding: "8px 14px",
+      fontWeight: "bold"
+    }}
+  >
+    Logout
+  </button>
+</div>
       </div>
 
       <div

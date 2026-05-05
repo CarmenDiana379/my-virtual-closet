@@ -10,13 +10,14 @@ function WardrobeCheckPage() {
   const { theme } = useTheme();
 
   const categories = [
-    "Headwear",
-    "Jackets",
-    "Tops",
-    "Bottoms",
-    "Accessories",
-    "Shoes"
-  ];
+  "Headwear",
+  "Jackets",
+  "Tops",
+  "Dresses",
+  "Bottoms",
+  "Accessories",
+  "Shoes"
+];
 
   const [selectedCategory, setSelectedCategory] = useState("Tops");
   const [genderFilter, setGenderFilter] = useState("All");

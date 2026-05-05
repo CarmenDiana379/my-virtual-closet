@@ -85,6 +85,7 @@ function AddClothingForm({ onAddItem }) {
         <option>Headwear</option>
         <option>Jackets</option>
         <option>Tops</option>
+        <option>Dresses</option>
         <option>Bottoms</option>
         <option>Accessories</option>
         <option>Shoes</option>

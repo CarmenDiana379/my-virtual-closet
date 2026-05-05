@@ -7,13 +7,14 @@ function WardrobePlanningPage() {
     useWardrobe();
 
   const categories = [
-    "Headwear",
-    "Jackets",
-    "Tops",
-    "Bottoms",
-    "Accessories",
-    "Shoes"
-  ];
+  "Headwear",
+  "Jackets",
+  "Tops",
+  "Dresses",
+  "Bottoms",
+  "Accessories",
+  "Shoes"
+];
 
   const [seasonFilter, setSeasonFilter] = useState("All");
   const [occasionFilter, setOccasionFilter] = useState("All");

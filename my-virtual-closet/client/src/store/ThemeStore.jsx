@@ -27,7 +27,8 @@ const themes = {
     text: "#ffffff",
     font: "Impact, Arial Black, sans-serif",
     radius: "2px",
-    pattern: "linear-gradient(135deg, #1f2937 25%, #111827 25%, #111827 50%, #1f2937 50%, #1f2937 75%, #111827 75%)",
+    pattern:
+      "linear-gradient(135deg, #1f2937 25%, #111827 25%, #111827 50%, #1f2937 50%, #1f2937 75%, #111827 75%)",
     symbol: "★",
     doorStyle: "graffiti"
   },
@@ -40,7 +41,8 @@ const themes = {
     text: "#111111",
     font: "Comic Sans MS, Arial, sans-serif",
     radius: "22px",
-    pattern: "radial-gradient(circle, rgba(255,255,255,0.9) 2px, transparent 3px)",
+    pattern:
+      "radial-gradient(circle, rgba(255,255,255,0.9) 2px, transparent 3px)",
     symbol: "✦",
     doorStyle: "bling"
   },
@@ -53,7 +55,8 @@ const themes = {
     text: "#4a1028",
     font: "Georgia, serif",
     radius: "20px",
-    pattern: "linear-gradient(45deg, rgba(255,255,255,0.45) 25%, transparent 25%)",
+    pattern:
+      "linear-gradient(45deg, rgba(255,255,255,0.45) 25%, transparent 25%)",
     symbol: "♡",
     doorStyle: "bow"
   },
@@ -66,7 +69,8 @@ const themes = {
     text: "#000000",
     font: "Comic Sans MS, Arial Black, sans-serif",
     radius: "0px",
-    pattern: "repeating-linear-gradient(45deg, #00ff99 0px, #00ff99 12px, #ff00ff 12px, #ff00ff 24px)",
+    pattern:
+      "repeating-linear-gradient(45deg, #00ff99 0px, #00ff99 12px, #ff00ff 12px, #ff00ff 24px)",
     symbol: "⚡",
     doorStyle: "animal"
   },
@@ -79,7 +83,8 @@ const themes = {
     text: "#ffffff",
     font: "Georgia, serif",
     radius: "0px",
-    pattern: "radial-gradient(circle at top left, rgba(139,0,0,0.45), transparent 35%)",
+    pattern:
+      "radial-gradient(circle at top left, rgba(139,0,0,0.45), transparent 35%)",
     symbol: "🕸",
     doorStyle: "gothic"
   },
@@ -92,7 +97,8 @@ const themes = {
     text: "#2b1708",
     font: "Georgia, serif",
     radius: "10px",
-    pattern: "linear-gradient(90deg, rgba(255,255,255,0.18) 50%, transparent 50%)",
+    pattern:
+      "linear-gradient(90deg, rgba(255,255,255,0.18) 50%, transparent 50%)",
     symbol: "✿",
     doorStyle: "wood"
   },
@@ -105,7 +111,8 @@ const themes = {
     text: "#111111",
     font: "Arial Black, Arial, sans-serif",
     radius: "14px",
-    pattern: "repeating-linear-gradient(90deg, rgba(0,128,0,0.15) 0px, rgba(0,128,0,0.15) 8px, transparent 8px, transparent 18px)",
+    pattern:
+      "repeating-linear-gradient(90deg, rgba(0,128,0,0.15) 0px, rgba(0,128,0,0.15) 8px, transparent 8px, transparent 18px)",
     symbol: "●",
     doorStyle: "sport"
   },
@@ -118,7 +125,8 @@ const themes = {
     text: "#111111",
     font: "Trebuchet MS, Arial, sans-serif",
     radius: "8px",
-    pattern: "linear-gradient(90deg, rgba(30,58,138,0.15) 25%, transparent 25%, transparent 50%, rgba(248,113,113,0.15) 50%, rgba(248,113,113,0.15) 75%, transparent 75%)",
+    pattern:
+      "linear-gradient(90deg, rgba(30,58,138,0.15) 25%, transparent 25%, transparent 50%, rgba(248,113,113,0.15) 50%, rgba(248,113,113,0.15) 75%, transparent 75%)",
     symbol: "◆",
     doorStyle: "stripe"
   },
@@ -134,6 +142,34 @@ const themes = {
     pattern: "none",
     symbol: "▣",
     doorStyle: "professional"
+  },
+
+  "Tech Futuristic": {
+    background: "#0f172a",
+    card: "#020617",
+    border: "#22d3ee",
+    accent: "#38bdf8",
+    text: "#e0f2fe",
+    font: "Arial Black, Arial, sans-serif",
+    radius: "12px",
+    pattern:
+      "linear-gradient(135deg, rgba(34,211,238,0.18) 25%, transparent 25%, transparent 50%, rgba(34,211,238,0.18) 50%, rgba(34,211,238,0.18) 75%, transparent 75%)",
+    symbol: "✧",
+    doorStyle: "tech"
+  },
+
+  "Sustainable Eco": {
+    background: "#f0fdf4",
+    card: "#dcfce7",
+    border: "#166534",
+    accent: "#4ade80",
+    text: "#14532d",
+    font: "Georgia, serif",
+    radius: "14px",
+    pattern:
+      "radial-gradient(circle, rgba(34,197,94,0.25) 1px, transparent 2px)",
+    symbol: "🌿",
+    doorStyle: "eco"
   }
 };
 

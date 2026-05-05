@@ -9,6 +9,7 @@ function Wardrobe() {
   const [isOpen, setIsOpen] = useState(false);
   const [mode, setMode] = useState("Two-piece");
   const [selectedOutfit, setSelectedOutfit] = useState({});
+  const [draggedItem, setDraggedItem] = useState(null);
   const [outfitName, setOutfitName] = useState("");
   const [outfitCategory, setOutfitCategory] = useState("Casual");
 
@@ -16,6 +17,7 @@ function Wardrobe() {
     Headwear: 0,
     Neckwear: 0,
     Tops: 0,
+    Dresses: 0,
     Bottoms: 0,
     Shoes: 0,
     Accessories: 0,
@@ -41,6 +43,14 @@ function Wardrobe() {
 
     if (selectedTheme === "Preppy") {
       return "repeating-linear-gradient(90deg, #dbeafe 0px, #dbeafe 20px, #ffffff 20px, #ffffff 40px)";
+    }
+
+    if (selectedTheme === "Tech Futuristic") {
+      return "linear-gradient(135deg, #020617, #0f172a, #22d3ee)";
+    }
+
+    if (selectedTheme === "Sustainable Eco") {
+      return "linear-gradient(135deg, #dcfce7, #86efac, #bbf7d0)";
     }
 
     return theme.card;
@@ -154,14 +164,14 @@ function Wardrobe() {
       <div
         style={{
           borderBottom: `2px solid ${theme.border}`,
-          padding: "4px 0"
+          padding: "6px 0"
         }}
       >
         <strong
           style={{
             display: "block",
-            marginBottom: "2px",
-            fontSize: "12px"
+            marginBottom: "4px",
+            fontSize: "13px"
           }}
         >
           {theme.symbol} {label}
@@ -172,8 +182,8 @@ function Wardrobe() {
             display: "flex",
             justifyContent: "center",
             alignItems: "center",
-            gap: "8px",
-            minHeight: "72px"
+            gap: "6px",
+            minHeight: "90px"
           }}
         >
           <button
@@ -189,8 +199,8 @@ function Wardrobe() {
           {visibleItems.length === 0 ? (
             <div
               style={{
-                width: "250px",
-                height: "45px",
+                width: "260px",
+                height: "60px",
                 border: `1px dashed ${theme.border}`,
                 display: "flex",
                 justifyContent: "center",
@@ -209,8 +219,8 @@ function Wardrobe() {
                 display: "flex",
                 justifyContent: "center",
                 alignItems: "center",
-                gap: "8px",
-                width: "380px"
+                gap: "6px",
+                width: "360px"
               }}
             >
               {visibleItems.map(({ item, position }) => (
@@ -228,8 +238,8 @@ function Wardrobe() {
                       position === "center"
                         ? `3px solid ${theme.border}`
                         : `1px solid ${theme.border}`,
-                    width: position === "center" ? "95px" : "68px",
-                    height: position === "center" ? "78px" : "58px",
+                    width: position === "center" ? "110px" : "75px",
+                    height: position === "center" ? "95px" : "70px",
                     flexShrink: 0,
                     display: "flex",
                     flexDirection: "column",
@@ -237,10 +247,10 @@ function Wardrobe() {
                     justifyContent: "center",
                     background: theme.card,
                     color: theme.text,
-                    padding: "3px",
-                    opacity: position === "center" ? 1 : 0.45,
+                    padding: "4px",
+                    opacity: position === "center" ? 1 : 0.4,
                     transform:
-                      position === "center" ? "scale(1.05)" : "scale(0.9)",
+                      position === "center" ? "scale(1.08)" : "scale(0.92)",
                     boxSizing: "border-box",
                     cursor: position === "center" ? "pointer" : "default",
                     borderRadius: theme.radius,
@@ -251,6 +261,12 @@ function Wardrobe() {
                         ? "0 0 10px #8b0000"
                         : position === "center" && selectedTheme === "Scene"
                         ? "0 0 10px #00ccff"
+                        : position === "center" &&
+                          selectedTheme === "Tech Futuristic"
+                        ? "0 0 12px #22d3ee"
+                        : position === "center" &&
+                          selectedTheme === "Sustainable Eco"
+                        ? "0 0 12px #4ade80"
                         : "none"
                   }}
                 >
@@ -259,11 +275,11 @@ function Wardrobe() {
                       src={item.image}
                       alt={item.name}
                       style={{
-                        width: position === "center" ? "43px" : "30px",
-                        height: position === "center" ? "43px" : "30px",
+                        width: position === "center" ? "60px" : "42px",
+                        height: position === "center" ? "60px" : "42px",
                         objectFit: "cover",
                         border: `1px solid ${theme.border}`,
-                        marginBottom: "2px",
+                        marginBottom: "3px",
                         borderRadius: theme.radius
                       }}
                     />
@@ -271,7 +287,7 @@ function Wardrobe() {
 
                   <strong
                     style={{
-                      fontSize: position === "center" ? "8px" : "7px",
+                      fontSize: position === "center" ? "9px" : "7px",
                       textAlign: "center"
                     }}
                   >
@@ -319,6 +335,10 @@ function Wardrobe() {
             ? "0 0 22px #8b0000"
             : selectedTheme === "Scene"
             ? "0 0 22px #00ccff"
+            : selectedTheme === "Tech Futuristic"
+            ? "0 0 25px #22d3ee"
+            : selectedTheme === "Sustainable Eco"
+            ? "0 0 20px #4ade80"
             : "none"
       }}
     >
@@ -384,7 +404,7 @@ function Wardrobe() {
           )}
 
           {mode === "One-piece" &&
-            renderRow("Tops", "Dresses / One-pieces", "One-piece")}
+            renderRow("Dresses", "Dresses / One-pieces", "One-piece")}
 
           {renderRow("Shoes", "Shoes", "Shoes")}
           {renderRow("Accessories", "Extra Accessories", "Accessories")}
@@ -402,9 +422,7 @@ function Wardrobe() {
             borderRadius: theme.radius
           }}
         >
-          <h2 style={{ marginTop: 0 }}>
-            {theme.symbol} Current Outfit
-          </h2>
+          <h2 style={{ marginTop: 0 }}>{theme.symbol} Current Outfit</h2>
 
           {Object.keys(selectedOutfit).length === 0 ? (
             <p>Click a centre item to add it here.</p>
@@ -412,9 +430,31 @@ function Wardrobe() {
             Object.entries(selectedOutfit).map(([section, item]) => (
               <div
                 key={section}
+                draggable
+                onDragStart={() => setDraggedItem(section)}
+                onDragOver={(e) => e.preventDefault()}
+                onDrop={() => {
+                  if (!draggedItem || draggedItem === section) return;
+
+                  setSelectedOutfit((prev) => {
+                    const newOutfit = { ...prev };
+                    const temp = newOutfit[section];
+
+                    newOutfit[section] = newOutfit[draggedItem];
+                    newOutfit[draggedItem] = temp;
+
+                    return newOutfit;
+                  });
+
+                  setDraggedItem(null);
+                }}
                 style={{
                   borderBottom: `1px solid ${theme.border}`,
-                  padding: "8px 0"
+                  padding: "10px 0",
+                  cursor: "grab",
+                  background:
+                    draggedItem === section ? theme.accent : "transparent",
+                  transition: "0.2s"
                 }}
               >
                 <strong>{section}</strong>
@@ -426,11 +466,11 @@ function Wardrobe() {
                     src={item.image}
                     alt={item.name}
                     style={{
-                      width: "70px",
-                      height: "70px",
+                      width: "100px",
+                      height: "100px",
                       objectFit: "cover",
                       border: `1px solid ${theme.border}`,
-                      marginTop: "5px",
+                      marginTop: "8px",
                       borderRadius: theme.radius
                     }}
                   />
@@ -514,7 +554,6 @@ function Wardrobe() {
         </div>
       </div>
 
-      {/* LEFT SLIDING DOOR */}
       <div
         style={{
           position: "absolute",
@@ -545,10 +584,15 @@ function Wardrobe() {
           {selectedTheme === "Gothic" && "🕸"}
           {selectedTheme === "Y2K" && "✦"}
           {selectedTheme === "Scene" && "⚡"}
-          {selectedTheme !== "Gothic" &&
-            selectedTheme !== "Y2K" &&
-            selectedTheme !== "Scene" &&
-            theme.symbol}
+          {selectedTheme === "Tech Futuristic" && "✧"}
+          {selectedTheme === "Sustainable Eco" && "🌿"}
+          {![
+            "Gothic",
+            "Y2K",
+            "Scene",
+            "Tech Futuristic",
+            "Sustainable Eco"
+          ].includes(selectedTheme) && theme.symbol}
 
           <div
             style={{
@@ -561,7 +605,6 @@ function Wardrobe() {
         </div>
       </div>
 
-      {/* RIGHT SLIDING DOOR */}
       <div
         style={{
           position: "absolute",
@@ -601,10 +644,15 @@ function Wardrobe() {
           {selectedTheme === "Gothic" && "🦇"}
           {selectedTheme === "Y2K" && "✦"}
           {selectedTheme === "Scene" && "⚡"}
-          {selectedTheme !== "Gothic" &&
-            selectedTheme !== "Y2K" &&
-            selectedTheme !== "Scene" &&
-            theme.symbol}
+          {selectedTheme === "Tech Futuristic" && "✧"}
+          {selectedTheme === "Sustainable Eco" && "🍃"}
+          {![
+            "Gothic",
+            "Y2K",
+            "Scene",
+            "Tech Futuristic",
+            "Sustainable Eco"
+          ].includes(selectedTheme) && theme.symbol}
         </div>
       </div>
     </div>
