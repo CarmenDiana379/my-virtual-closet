@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useTheme } from "../store/ThemeStore";
 import { auth } from "../firebase";
@@ -6,36 +6,25 @@ import { signOut } from "firebase/auth";
 
 function StyleSelectionPage() {
   const navigate = useNavigate();
-  const { saveTheme, themes, selectedTheme } = useTheme();
+  const { saveTheme, themes, selectedTheme, reloadThemes } = useTheme();
 
   const [selectedStyle, setSelectedStyle] = useState(selectedTheme);
 
-  const styles = [
-    "Minimalistic Chic",
-    "Urban Streetwear",
-    "Y2K",
-    "Coquette",
-    "Scene",
-    "Gothic",
-    "Vintage Revival",
-    "Activewear / Sports",
-    "Preppy",
-    "Smart / Professional",
-    "Tech Futuristic",
-    "Sustainable Eco"
-  ];
+  useEffect(() => {
+    reloadThemes();
+  }, [reloadThemes]);
+
+  const styles = Object.keys(themes);
 
   const descriptions = {
     "Minimalistic Chic":
       "Simple, clean and neutral for a calm wardrobe experience.",
     "Urban Streetwear":
       "Strong, bold and edgy with high-contrast streetwear styling.",
-    Y2K:
-      "Glossy, playful and bling-inspired with bright nostalgic colour.",
+    Y2K: "Glossy, playful and bling-inspired with bright nostalgic colour.",
     Coquette:
       "Soft, romantic and delicate with pink tones and bow-like styling.",
-    Scene:
-      "Bold, chaotic, neon and expressive with animal-print energy.",
+    Scene: "Bold, chaotic, neon and expressive with animal-print energy.",
     Gothic:
       "Dark, dramatic and atmospheric with gothic contrast and web details.",
     "Vintage Revival":
@@ -123,6 +112,8 @@ function StyleSelectionPage() {
 
   const renderMiniWardrobe = (styleName) => {
     const theme = themes[styleName];
+
+    if (!theme) return null;
 
     return (
       <div
@@ -232,31 +223,37 @@ function StyleSelectionPage() {
       style={{
         fontFamily: "Arial, sans-serif",
         minHeight: "100vh",
-        background: "linear-gradient(135deg, #f7f7f7, #e6e6e6)",
+        background:
+          "radial-gradient(circle at top left, #f3e8ff 0%, transparent 30%), linear-gradient(135deg, #f8fafc 0%, #e0f2f1 45%, #fdf2f8 100%)",
         display: "flex",
-        flexDirection: "column"
+        flexDirection: "column",
+        color: "#1f2933"
       }}
     >
       <div
         style={{
-          padding: "20px",
-          borderBottom: "4px solid black",
+          padding: "18px 34px",
+          background: "rgba(255,255,255,0.82)",
+          backdropFilter: "blur(12px)",
+          borderBottom: "1px solid rgba(31,41,51,0.18)",
           display: "flex",
           justifyContent: "space-between",
-          alignItems: "center",
-          background: "white"
+          alignItems: "center"
         }}
       >
-        <h2 style={{ margin: 0 }}>✦ My Virtual Closet ✦</h2>
+        <h2 style={{ margin: 0 }}>My Virtual Closet</h2>
 
         <div style={{ display: "flex", gap: "10px" }}>
           <button
             onClick={() => navigate("/dashboard")}
             style={{
-              padding: "8px 14px",
-              border: "2px solid black",
-              background: "#eeeeee",
-              fontWeight: "bold"
+              padding: "9px 18px",
+              border: "1px solid #2f6f73",
+              background: "white",
+              color: "#2f6f73",
+              borderRadius: "24px",
+              fontWeight: "bold",
+              cursor: "pointer"
             }}
           >
             Dashboard
@@ -265,10 +262,13 @@ function StyleSelectionPage() {
           <button
             onClick={handleLogout}
             style={{
-              padding: "8px 14px",
-              border: "2px solid black",
-              background: "#eeeeee",
-              fontWeight: "bold"
+              padding: "9px 18px",
+              border: "1px solid #2f6f73",
+              background: "#2f6f73",
+              color: "white",
+              borderRadius: "24px",
+              fontWeight: "bold",
+              cursor: "pointer"
             }}
           >
             Logout
@@ -276,19 +276,26 @@ function StyleSelectionPage() {
         </div>
       </div>
 
-      <div
-        style={{
-          textAlign: "center",
-          padding: "30px 20px 15px"
-        }}
-      >
-        <h1 style={{ fontSize: "34px", marginBottom: "8px" }}>
+      <div style={{ textAlign: "center", padding: "35px 20px 20px" }}>
+        <p
+          style={{
+            margin: 0,
+            fontWeight: "bold",
+            letterSpacing: "2px",
+            color: "#2f6f73",
+            fontSize: "12px"
+          }}
+        >
+          PERSONALISE YOUR EXPERIENCE
+        </p>
+
+        <h1 style={{ fontSize: "38px", marginBottom: "8px" }}>
           Choose Your Wardrobe Style
         </h1>
 
         <p>
-          Select one visual template. Your chosen wardrobe design will apply
-          across your dashboard and main pages.
+          Select one visual template. Built-in and admin-created styles will
+          appear here automatically.
         </p>
       </div>
 
@@ -297,10 +304,12 @@ function StyleSelectionPage() {
           width: "90%",
           maxWidth: "1400px",
           margin: "0 auto 40px",
-          border: "4px solid black",
-          background: "white",
+          border: "1px solid rgba(31,41,51,0.14)",
+          background: "rgba(255,255,255,0.82)",
           padding: "30px",
-          boxSizing: "border-box"
+          boxSizing: "border-box",
+          borderRadius: "30px",
+          boxShadow: "0 20px 45px rgba(31,41,51,0.1)"
         }}
       >
         <div
@@ -312,6 +321,8 @@ function StyleSelectionPage() {
         >
           {styles.map((style) => {
             const theme = themes[style];
+            if (!theme) return null;
+
             const isSelected = selectedStyle === style;
 
             return (
@@ -320,13 +331,15 @@ function StyleSelectionPage() {
                 style={{
                   border: isSelected
                     ? `5px solid ${theme.border}`
-                    : "2px solid black",
+                    : "1px solid rgba(31,41,51,0.18)",
                   background: theme.card,
                   color: theme.text,
                   padding: "18px",
                   borderRadius: theme.radius,
                   fontFamily: theme.font,
-                  boxShadow: isSelected ? getPreviewShadow(style, theme) : "none"
+                  boxShadow: isSelected
+                    ? getPreviewShadow(style, theme)
+                    : "0 12px 25px rgba(31,41,51,0.08)"
                 }}
               >
                 {renderMiniWardrobe(style)}
@@ -336,7 +349,9 @@ function StyleSelectionPage() {
                 </h2>
 
                 <p style={{ minHeight: "42px", fontSize: "14px" }}>
-                  {descriptions[style]}
+                  {descriptions[style] ||
+                    theme.description ||
+                    "Admin-created wardrobe style template."}
                 </p>
 
                 <button

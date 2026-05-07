@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useState } from "react";
-import { doc, getDoc, updateDoc } from "firebase/firestore";
+import { collection, doc, getDoc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../firebase";
 import { useAuth } from "./AuthStore";
 
 const ThemeContext = createContext();
 
-const themes = {
+const defaultThemes = {
   "Minimalistic Chic": {
     background: "#ffffff",
     card: "#f4f4f4",
@@ -176,9 +176,46 @@ const themes = {
 export function ThemeProvider({ children }) {
   const { user } = useAuth();
 
+  const [themes, setThemes] = useState(defaultThemes);
+
   const [selectedTheme, setSelectedTheme] = useState(
     localStorage.getItem("selectedTheme") || "Minimalistic Chic"
   );
+
+  const loadAdminTemplates = async () => {
+    const data = await getDocs(collection(db, "styleTemplates"));
+
+    const adminThemes = {};
+
+    data.docs.forEach((document) => {
+      const template = document.data();
+
+      if (!template.name) return;
+
+      adminThemes[template.name] = {
+        background: template.background || "#f8fafc",
+        card: template.card || "#ffffff",
+        border: template.border || "#2f6f73",
+        accent: template.accent || "#2f6f73",
+        text: template.text || "#1f2933",
+        font: template.font || "Arial, sans-serif",
+        radius: template.radius || "18px",
+        pattern: template.pattern || "none",
+        symbol: template.symbol || "✦",
+        doorStyle: template.doorStyle || "custom",
+        description: template.description || "Admin-created wardrobe template."
+      };
+    });
+
+    setThemes({
+      ...defaultThemes,
+      ...adminThemes
+    });
+  };
+
+  useEffect(() => {
+    loadAdminTemplates();
+  }, []);
 
   useEffect(() => {
     const loadTheme = async () => {
@@ -197,14 +234,12 @@ export function ThemeProvider({ children }) {
   }, [user]);
 
   useEffect(() => {
-    const currentTheme = themes[selectedTheme];
+    const currentTheme = themes[selectedTheme] || defaultThemes["Minimalistic Chic"];
 
-    if (currentTheme) {
-      document.body.style.backgroundColor = currentTheme.background;
-      document.body.style.color = currentTheme.text;
-      document.body.style.fontFamily = currentTheme.font;
-    }
-  }, [selectedTheme]);
+    document.body.style.backgroundColor = currentTheme.background;
+    document.body.style.color = currentTheme.text;
+    document.body.style.fontFamily = currentTheme.font;
+  }, [selectedTheme, themes]);
 
   const saveTheme = async (themeName) => {
     setSelectedTheme(themeName);
@@ -221,9 +256,10 @@ export function ThemeProvider({ children }) {
     <ThemeContext.Provider
       value={{
         selectedTheme,
-        theme: themes[selectedTheme],
+        theme: themes[selectedTheme] || defaultThemes["Minimalistic Chic"],
         saveTheme,
-        themes
+        themes,
+        reloadThemes: loadAdminTemplates
       }}
     >
       {children}
