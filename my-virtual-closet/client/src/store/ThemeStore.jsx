@@ -61,33 +61,159 @@ const defaultThemes = {
     doorStyle: "bow"
   },
 
-  Scene: {
-    background: "#00ff99",
-    card: "#ff00ff",
-    border: "#000000",
-    accent: "#00ccff",
-    text: "#000000",
-    font: "Comic Sans MS, Arial Black, sans-serif",
-    radius: "0px",
-    pattern:
-      "repeating-linear-gradient(45deg, #00ff99 0px, #00ff99 12px, #ff00ff 12px, #ff00ff 24px)",
-    symbol: "⚡",
-    doorStyle: "animal"
-  },
+  "Rococo Lace": {
+  background: "#ffffff",
+  card: "rgba(255, 255, 255, 0.99)",
+  border: "#d6c2b3",
+  accent: "#efe3d9",
+  text: "#46332c",
+  font: "'Cormorant Garamond', serif",
+  radius: "50px",
 
-  Gothic: {
-    background: "#000000",
-    card: "#1a1a1a",
-    border: "#8b0000",
-    accent: "#3b0a45",
-    text: "#ffffff",
-    font: "Georgia, serif",
-    radius: "0px",
-    pattern:
-      "radial-gradient(circle at top left, rgba(139,0,0,0.45), transparent 35%)",
-    symbol: "🕸",
-    doorStyle: "gothic"
-  },
+  pattern: `
+    /* === LACE THREAD HOLES (micro perforation) === */
+    radial-gradient(circle at 6% 10%, rgba(210,200,195,0.55) 0.8px, transparent 1.6px),
+    radial-gradient(circle at 18% 22%, rgba(210,200,195,0.45) 0.8px, transparent 1.8px),
+    radial-gradient(circle at 32% 14%, rgba(210,200,195,0.5) 0.8px, transparent 1.7px),
+    radial-gradient(circle at 70% 30%, rgba(210,200,195,0.45) 0.8px, transparent 1.8px),
+    radial-gradient(circle at 85% 75%, rgba(210,200,195,0.5) 0.8px, transparent 1.7px),
+
+    /* === LACE KNOT CLUSTERS (embroidered stitch nodes) === */
+    radial-gradient(circle at 25% 40%, rgba(240,235,232,0.9) 1px, transparent 3px),
+    radial-gradient(circle at 28% 43%, rgba(220,210,205,0.6) 0.8px, transparent 2.5px),
+    radial-gradient(circle at 60% 55%, rgba(240,235,232,0.85) 1px, transparent 3px),
+    radial-gradient(circle at 63% 58%, rgba(220,210,205,0.55) 0.8px, transparent 2.5px),
+
+    /* === LACE MESH (woven fabric structure) === */
+    repeating-linear-gradient(
+      0deg,
+      rgba(214,196,184,0.08) 0px,
+      rgba(214,196,184,0.08) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+
+    repeating-linear-gradient(
+      90deg,
+      rgba(214,196,184,0.06) 0px,
+      rgba(214,196,184,0.06) 1px,
+      transparent 1px,
+      transparent 5px
+    ),
+
+    /* diagonal stitch tension */
+    repeating-linear-gradient(
+      45deg,
+      rgba(255,255,255,0.35) 0px,
+      rgba(255,255,255,0.35) 1px,
+      transparent 1px,
+      transparent 6px
+    ),
+
+    repeating-linear-gradient(
+      -45deg,
+      rgba(240,235,230,0.25) 0px,
+      rgba(240,235,230,0.25) 1px,
+      transparent 1px,
+      transparent 7px
+    ),
+
+    /* === DAMASK BASE (Victorian wallpaper floral ghost pattern) === */
+    radial-gradient(circle at 20% 30%, rgba(214,196,184,0.10) 0px, transparent 18px),
+    radial-gradient(circle at 80% 70%, rgba(214,196,184,0.08) 0px, transparent 22px),
+    radial-gradient(circle at 50% 50%, rgba(214,196,184,0.06) 0px, transparent 26px),
+
+    /* === FABRIC BLEED / TEXTURE WASH === */
+    linear-gradient(
+      to bottom,
+      rgba(255,255,255,1),
+      rgba(252,250,248,0.95),
+      rgba(255,255,255,0.98)
+    )
+  `,
+
+  symbol: "⚜",
+  doorStyle: "victorian-lace-damask-hybrid"
+},
+
+  "Gothic": {
+  background: "#060507",
+  card: "rgba(14, 10, 12, 0.98)",
+  border: "#4a363a",
+  accent: "#201014",
+  text: "#e9dccf",
+  font: "'Cormorant Garamond', serif",
+  radius: "18px",
+
+  pattern: `
+    /* =====================================================
+       VICTORIAN LACE BLACK BASE (Rococo structure, but dark)
+    ===================================================== */
+
+    /* === THREAD HOLES (aged embroidery perforation) === */
+    radial-gradient(circle at 6% 10%, rgba(120,110,115,0.25) 0.8px, transparent 1.6px),
+    radial-gradient(circle at 18% 22%, rgba(110,100,105,0.22) 0.8px, transparent 1.8px),
+    radial-gradient(circle at 32% 14%, rgba(130,120,125,0.20) 0.8px, transparent 1.7px),
+    radial-gradient(circle at 70% 30%, rgba(100,90,95,0.18) 0.8px, transparent 1.8px),
+    radial-gradient(circle at 85% 75%, rgba(120,110,115,0.22) 0.8px, transparent 1.7px),
+
+    /* === EMBROIDERED KNOT CLUSTERS (damask stitch nodes) === */
+    radial-gradient(circle at 25% 40%, rgba(210,200,205,0.08) 1px, transparent 3px),
+    radial-gradient(circle at 28% 43%, rgba(170,160,165,0.10) 0.8px, transparent 2.5px),
+    radial-gradient(circle at 60% 55%, rgba(200,190,195,0.07) 1px, transparent 3px),
+    radial-gradient(circle at 63% 58%, rgba(160,150,155,0.09) 0.8px, transparent 2.5px),
+
+    /* === VICTORIAN LACE MESH (fabric weave structure) === */
+    repeating-linear-gradient(
+      0deg,
+      rgba(160,140,145,0.05) 0px,
+      rgba(160,140,145,0.05) 1px,
+      transparent 1px,
+      transparent 4px
+    ),
+
+    repeating-linear-gradient(
+      90deg,
+      rgba(140,120,125,0.04) 0px,
+      rgba(140,120,125,0.04) 1px,
+      transparent 1px,
+      transparent 5px
+    ),
+
+    /* === DIAGONAL LACE TENSION (ornamental stitching) === */
+    repeating-linear-gradient(
+      45deg,
+      rgba(200,190,195,0.06) 0px,
+      rgba(200,190,195,0.06) 1px,
+      transparent 1px,
+      transparent 6px
+    ),
+
+    repeating-linear-gradient(
+      -45deg,
+      rgba(90,80,85,0.05) 0px,
+      rgba(90,80,85,0.05) 1px,
+      transparent 1px,
+      transparent 7px
+    ),
+
+    /* === VICTORIAN DAMASK BASE (ghost floral wallpaper) === */
+    radial-gradient(circle at 20% 30%, rgba(80,70,75,0.08) 0px, transparent 18px),
+    radial-gradient(circle at 80% 70%, rgba(70,60,65,0.07) 0px, transparent 22px),
+    radial-gradient(circle at 50% 50%, rgba(60,50,55,0.06) 0px, transparent 26px),
+
+    /* === AGED VELVET WASH (deep darkness, no glow) === */
+    linear-gradient(
+      to bottom,
+      rgba(6,5,7,1),
+      rgba(10,8,10,0.98),
+      rgba(5,4,6,1)
+    )
+  `,
+
+  symbol: "⚜",
+  doorStyle: "victorian-rococo-goth-hybrid"
+},
 
   "Vintage Revival": {
     background: "#d9a066",

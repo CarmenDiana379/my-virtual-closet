@@ -1,6 +1,12 @@
 import { useState } from "react";
+import { generateSustainabilityAdvice } from "../services/aiService";
 
-function AddClothingForm({ onAddItem }) {
+function AddClothingForm({
+  onAddItem,
+  items = [],
+  wishlistItems = [],
+  recycleItems = []
+}) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Tops");
   const [image, setImage] = useState("");
@@ -11,7 +17,12 @@ function AddClothingForm({ onAddItem }) {
   const [season, setSeason] = useState("All seasons");
   const [occasion, setOccasion] = useState("Everyday");
 
+  const [aiAdvice, setAiAdvice] = useState("");
+  const [loadingAdvice, setLoadingAdvice] = useState(false);
+
   const convertImageToBase64 = (file) => {
+    if (!file) return;
+
     const reader = new FileReader();
 
     reader.onloadend = () => {
@@ -19,6 +30,26 @@ function AddClothingForm({ onAddItem }) {
     };
 
     reader.readAsDataURL(file);
+  };
+
+  const handleGenerateAdvice = async () => {
+    if (!name) {
+      alert("Please add the item name first");
+      return;
+    }
+
+    setLoadingAdvice(true);
+
+    const advice = await generateSustainabilityAdvice({
+      wardrobeCount: items.length,
+      recycleCount: recycleItems.length,
+      wishlistCount: wishlistItems.length,
+      itemName: name,
+      category
+    });
+
+    setAiAdvice(advice);
+    setLoadingAdvice(false);
   };
 
   const handleSubmit = (e) => {
@@ -55,6 +86,7 @@ function AddClothingForm({ onAddItem }) {
     setSize("");
     setSeason("All seasons");
     setOccasion("Everyday");
+    setAiAdvice("");
   };
 
   return (
@@ -175,6 +207,24 @@ function AddClothingForm({ onAddItem }) {
       <br />
 
       <button
+        type="button"
+        onClick={handleGenerateAdvice}
+        style={{
+          marginTop: "12px",
+          marginRight: "10px",
+          padding: "10px 16px",
+          borderRadius: "20px",
+          border: "none",
+          background: "linear-gradient(135deg, #6d5dfc, #2f6f73)",
+          color: "white",
+          fontWeight: "bold",
+          cursor: "pointer"
+        }}
+      >
+        {loadingAdvice ? "Generating..." : "Get AI Sustainability Advice"}
+      </button>
+
+      <button
         type="submit"
         style={{
           marginTop: "12px",
@@ -183,6 +233,23 @@ function AddClothingForm({ onAddItem }) {
       >
         Add Item
       </button>
+
+      {aiAdvice && (
+        <div
+          style={{
+            marginTop: "20px",
+            padding: "18px",
+            borderRadius: "18px",
+            background: "rgba(255,255,255,0.85)",
+            border: "1px solid rgba(31,41,51,0.16)",
+            boxShadow: "0 10px 24px rgba(31,41,51,0.08)",
+            textAlign: "left"
+          }}
+        >
+          <h3 style={{ marginTop: 0 }}>AI Sustainability Advisor</h3>
+          <p style={{ lineHeight: "1.7", marginBottom: 0 }}>{aiAdvice}</p>
+        </div>
+      )}
     </form>
   );
 }

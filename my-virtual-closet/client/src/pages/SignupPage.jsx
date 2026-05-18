@@ -246,7 +246,34 @@ function SignupPage() {
           background: "rgba(255,255,255,0.82)"
         }}
       >
-        <div>Facebook Instagram TikTok</div>
+        <div style={{ display: "flex", gap: "12px" }}>
+  <a
+    href="https://www.facebook.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ color: "inherit", textDecoration: "none" }}
+  >
+    Facebook
+  </a>
+
+  <a
+    href="https://www.instagram.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ color: "inherit", textDecoration: "none" }}
+  >
+    Instagram
+  </a>
+
+  <a
+    href="https://www.tiktok.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ color: "inherit", textDecoration: "none" }}
+  >
+    TikTok
+  </a>
+</div>
         <div>Contact Us | Subscribe | FAQ</div>
       </footer>
     </div>

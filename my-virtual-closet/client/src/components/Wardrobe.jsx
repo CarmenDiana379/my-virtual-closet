@@ -30,8 +30,15 @@ function Wardrobe() {
     }
 
     if (selectedTheme === "Gothic") {
-      return "radial-gradient(circle at top, #3b0a45, #000000 65%)";
-    }
+  return `
+    linear-gradient(
+      to bottom,
+      #1a1618,
+      #241b20,
+      #120f12
+    )
+  `;
+}
 
     if (selectedTheme === "Scene") {
       return "repeating-linear-gradient(45deg, #00ff99 0px, #00ff99 14px, #ff00ff 14px, #ff00ff 28px)";
@@ -332,7 +339,7 @@ function Wardrobe() {
           selectedTheme === "Y2K"
             ? "0 0 25px #ff00cc"
             : selectedTheme === "Gothic"
-            ? "0 0 22px #8b0000"
+            ? "none"
             : selectedTheme === "Scene"
             ? "0 0 22px #00ccff"
             : selectedTheme === "Tech Futuristic"
@@ -581,7 +588,7 @@ function Wardrobe() {
             fontSize: "45px"
           }}
         >
-          {selectedTheme === "Gothic" && "🕸"}
+          {selectedTheme === "Gothic" && "⚜"}
           {selectedTheme === "Y2K" && "✦"}
           {selectedTheme === "Scene" && "⚡"}
           {selectedTheme === "Tech Futuristic" && "✧"}
@@ -641,7 +648,7 @@ function Wardrobe() {
             }}
           />
 
-          {selectedTheme === "Gothic" && "🦇"}
+          {selectedTheme === "Gothic" && "⚜"}
           {selectedTheme === "Y2K" && "✦"}
           {selectedTheme === "Scene" && "⚡"}
           {selectedTheme === "Tech Futuristic" && "✧"}

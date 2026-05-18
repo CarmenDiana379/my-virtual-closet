@@ -40,12 +40,25 @@ function PageLayout({ title, children, showDashboardButton = true }) {
           background: theme.card
         }}
       >
-        <div>
-          <h2 style={{ margin: 0 }}>
-            {theme.symbol} LOGO {theme.symbol}
-          </h2>
-          <small>{selectedTheme}</small>
-        </div>
+        <div
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "12px"
+  }}
+>
+  <img
+    src="/images/logo1.png"
+    alt="My Virtual Closet Logo"
+    style={{
+      width: "250px",
+      height: "110px",
+      objectFit: "contain"
+    }}
+  />
+
+  <small>{selectedTheme}</small>
+</div>
 
         <div style={{ display: "flex", gap: "10px" }}>
           {showDashboardButton && (

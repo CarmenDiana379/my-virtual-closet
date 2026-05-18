@@ -6,7 +6,7 @@ import { useWardrobe } from "../store/WardrobeStore";
 import { useTheme } from "../store/ThemeStore";
 
 function WardrobeCheckPage() {
-  const { items, addItem, moveToBin } = useWardrobe();
+  const { items, wishlistItems, recycleItems, addItem, moveToBin } = useWardrobe();
   const { theme } = useTheme();
 
   const categories = [
@@ -58,7 +58,12 @@ function WardrobeCheckPage() {
 
   return (
     <PageLayout title="Wardrobe Check">
-      <AddClothingForm onAddItem={handleAddItem} />
+      <AddClothingForm
+  onAddItem={handleAddItem}
+  items={items}
+  wishlistItems={[]}
+  recycleItems={[]}
+/>
 
       <h2>Category</h2>
 

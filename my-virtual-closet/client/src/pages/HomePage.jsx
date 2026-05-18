@@ -81,15 +81,37 @@ function HomePage() {
           borderBottom: "1px solid rgba(31,41,51,0.18)"
         }}
       >
-        <h2
-          style={{
-            margin: 0,
-            letterSpacing: "1px",
-            fontSize: "22px"
-          }}
-        >
-          My Virtual Closet
-        </h2>
+        <div
+  onClick={() => navigate("/")}
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "10px",
+    cursor: "pointer"
+  }}
+>
+  <img
+  src="/images/logo1.png"
+  alt="My Virtual Closet Logo"
+  style={{
+    width: "200px",
+    height: "100px",
+    objectFit: "contain",
+    borderRadius: "50%",
+    transform: "scale(1.8)"
+  }}
+/>
+
+  <h2
+    style={{
+      margin: 0,
+      letterSpacing: "1px",
+      fontSize: "22px"
+    }}
+  >
+
+  </h2>
+</div>
 
         <div>
           <button
@@ -370,7 +392,34 @@ function HomePage() {
           background: "rgba(255,255,255,0.82)"
         }}
       >
-        <div>Facebook Instagram TikTok</div>
+        <div style={{ display: "flex", gap: "12px" }}>
+  <a
+    href="https://www.facebook.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ color: "inherit", textDecoration: "none" }}
+  >
+    Facebook
+  </a>
+
+  <a
+    href="https://www.instagram.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ color: "inherit", textDecoration: "none" }}
+  >
+    Instagram
+  </a>
+
+  <a
+    href="https://www.tiktok.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ color: "inherit", textDecoration: "none" }}
+  >
+    TikTok
+  </a>
+</div>
         <div>Contact Us | Subscribe | FAQ</div>
       </div>
 
