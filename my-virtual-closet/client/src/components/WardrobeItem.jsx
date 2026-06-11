@@ -1,6 +1,8 @@
 import { useState } from "react";
+import { useTheme } from "../store/ThemeStore";
 
 function WardrobeItem({ item, onDelete }) {
+    const { theme } = useTheme();
   const [showDetails, setShowDetails] = useState(false);
 
   return (
@@ -15,7 +17,9 @@ function WardrobeItem({ item, onDelete }) {
           flexDirection: "column",
           justifyContent: "space-between",
           alignItems: "center",
-          background: "white",
+          background: theme.card,
+color: theme.text,
+border: `2px solid ${theme.border}`,
           cursor: "pointer"
         }}
       >
@@ -77,7 +81,9 @@ function WardrobeItem({ item, onDelete }) {
             onClick={(e) => e.stopPropagation()}
             style={{
               width: "380px",
-              background: "white",
+              background: theme.card,
+color: theme.text,
+border: `2px solid ${theme.border}`,
               border: "2px solid black",
               padding: "25px",
               textAlign: "center",

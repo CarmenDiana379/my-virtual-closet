@@ -44,6 +44,12 @@ function AdminDashboardPage() {
     binItems: 0
   });
 
+const [searchTerm, setSearchTerm] = useState("");
+const [roleFilter, setRoleFilter] = useState("All");
+const [currentPage, setCurrentPage] = useState(1);
+
+const USERS_PER_PAGE = 10;
+
   const [stats, setStats] = useState({
     users: 0,
     wardrobeItems: 0,
@@ -290,6 +296,32 @@ function AdminDashboardPage() {
       )
     : 0;
 
+    const filteredUsers = users.filter((user) => {
+  const matchesSearch =
+    (user.fullName || "")
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase()) ||
+    (user.email || "")
+      .toLowerCase()
+      .includes(searchTerm.toLowerCase());
+
+  const matchesRole =
+    roleFilter === "All"
+      ? true
+      : user.role === roleFilter;
+
+  return matchesSearch && matchesRole;
+});
+
+const totalPages = Math.ceil(
+  filteredUsers.length / USERS_PER_PAGE
+);
+
+const paginatedUsers = filteredUsers.slice(
+  (currentPage - 1) * USERS_PER_PAGE,
+  currentPage * USERS_PER_PAGE
+);
+
   return (
     <div
       style={{
@@ -303,22 +335,35 @@ function AdminDashboardPage() {
       }}
     >
       <div
-        style={{
-          padding: "18px 34px",
-          background: "rgba(255,255,255,0.82)",
-          backdropFilter: "blur(12px)",
-          borderBottom: "1px solid rgba(31,41,51,0.18)",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center"
-        }}
-      >
-        <h2 style={{ margin: 0 }}>Admin Panel</h2>
+  style={{
+    padding: "18px 34px",
+    background: "rgba(255,255,255,0.82)",
+    backdropFilter: "blur(12px)",
+    borderBottom: "1px solid rgba(31,41,51,0.18)",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center"
+  }}
+>
+  <h2 style={{ margin: 0 }}>Admin Panel</h2>
 
-        <button onClick={handleLogout} style={buttonStyle}>
-          Logout
-        </button>
-      </div>
+  <div style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+    <button
+      onClick={() => navigate("/admin-feedback")}
+      style={{
+        ...buttonStyle,
+        background: "#6d5dfc",
+        border: "1px solid #6d5dfc"
+      }}
+    >
+      User Feedback
+    </button>
+
+    <button onClick={handleLogout} style={buttonStyle}>
+      Logout
+    </button>
+  </div>
+</div>
 
       <main
         style={{
@@ -362,9 +407,9 @@ function AdminDashboardPage() {
         <div
           style={{
             display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(160px, 1fr))",
-            gap: "16px",
-            margin: "20px 0 35px"
+    gridTemplateColumns: "repeat(7, 1fr)",
+    gap: "12px",
+    margin: "20px 0 35px"
           }}
         >
           {[
@@ -484,6 +529,44 @@ function AdminDashboardPage() {
 
         <section style={{ ...cardStyle, padding: "24px", marginBottom: "35px" }}>
           <h2>Registered Users</h2>
+          <div
+  style={{
+    display: "flex",
+    gap: "12px",
+    marginBottom: "20px",
+    flexWrap: "wrap"
+  }}
+>
+  <input
+    type="text"
+    placeholder="Search users..."
+    value={searchTerm}
+    onChange={(e) => {
+      setSearchTerm(e.target.value);
+      setCurrentPage(1);
+    }}
+    style={{
+      ...inputStyle,
+      maxWidth: "300px"
+    }}
+  />
+
+  <select
+    value={roleFilter}
+    onChange={(e) => {
+      setRoleFilter(e.target.value);
+      setCurrentPage(1);
+    }}
+    style={{
+      ...inputStyle,
+      maxWidth: "180px"
+    }}
+  >
+    <option value="All">All Users</option>
+    <option value="admin">Admins</option>
+    <option value="user">Users</option>
+  </select>
+</div>
 
           <div style={{ overflowX: "auto" }}>
             <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "15px" }}>
@@ -498,7 +581,7 @@ function AdminDashboardPage() {
               </thead>
 
               <tbody>
-                {users.map((user) => (
+                {paginatedUsers.map((user) => (
                   <tr key={user.id} style={{ borderBottom: "1px solid rgba(31,41,51,0.12)" }}>
                     <td style={{ padding: "13px" }}>{user.fullName}</td>
                     <td style={{ padding: "13px" }}>{user.email}</td>
@@ -544,6 +627,36 @@ function AdminDashboardPage() {
               </tbody>
             </table>
           </div>
+          
+        <div
+  style={{
+    display: "flex",
+    justifyContent: "center",
+    alignItems: "center",
+    gap: "12px",
+    marginTop: "20px"
+  }}
+>
+  <button
+    disabled={currentPage === 1}
+    onClick={() => setCurrentPage((prev) => prev - 1)}
+    style={buttonStyle}
+  >
+    Previous
+  </button>
+
+  <strong>
+    Page {currentPage} of {totalPages || 1}
+  </strong>
+
+  <button
+    disabled={currentPage === totalPages}
+    onClick={() => setCurrentPage((prev) => prev + 1)}
+    style={buttonStyle}
+  >
+    Next
+  </button>
+</div>
         </section>
 
         {selectedUser && (

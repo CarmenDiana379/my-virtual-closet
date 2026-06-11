@@ -5,20 +5,46 @@ function AddClothingForm({
   onAddItem,
   items = [],
   wishlistItems = [],
-  recycleItems = []
+  recycleItems = [],
+  existingOccasions = []
 }) {
   const [name, setName] = useState("");
   const [category, setCategory] = useState("Tops");
+  const [customCategory, setCustomCategory] = useState("");
   const [image, setImage] = useState("");
 
   const [gender, setGender] = useState("Unisex");
   const [sizeSystem, setSizeSystem] = useState("UK");
   const [size, setSize] = useState("");
   const [season, setSeason] = useState("All seasons");
+
   const [occasion, setOccasion] = useState("Everyday");
+  const [customOccasion, setCustomOccasion] = useState("");
 
   const [aiAdvice, setAiAdvice] = useState("");
   const [loadingAdvice, setLoadingAdvice] = useState(false);
+
+  const defaultOccasions = [
+    "Everyday",
+    "Job Interview",
+    "Casual Dinner",
+    "Fancy Dinner",
+    "Date",
+    "House Party",
+    "Club Night",
+    "City Trip",
+    "Resort Holiday",
+    "Ski",
+    "Beach",
+    "Formal Event"
+  ];
+
+  const allOccasions = [
+    ...defaultOccasions,
+    ...existingOccasions.filter(
+      (item) => item && !defaultOccasions.includes(item)
+    )
+  ];
 
   const convertImageToBase64 = (file) => {
     if (!file) return;
@@ -40,19 +66,21 @@ function AddClothingForm({
 
     setLoadingAdvice(true);
 
+    const finalCategory = category === "Other" ? customCategory : category;
+
     const advice = await generateSustainabilityAdvice({
       wardrobeCount: items.length,
       recycleCount: recycleItems.length,
       wishlistCount: wishlistItems.length,
       itemName: name,
-      category
+      category: finalCategory
     });
 
     setAiAdvice(advice);
     setLoadingAdvice(false);
   };
 
-  const handleSubmit = (e) => {
+const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (!name || !image) {
@@ -65,27 +93,52 @@ function AddClothingForm({
       return;
     }
 
+    const finalOccasion =
+      occasion === "Other" ? customOccasion.trim() : occasion;
+
+    if (!finalOccasion) {
+      alert("Please add a custom occasion");
+      return;
+    }
+
+    const finalCategory =
+      category === "Other" ? customCategory.trim() : category;
+
+    if (!finalCategory) {
+      alert("Please add a custom category");
+      return;
+    }
+
     const newItem = {
       name,
-      category,
+      category: finalCategory,
       image,
       gender,
       sizeSystem,
       size,
       season,
-      occasion
+      occasion: finalOccasion
     };
 
-    onAddItem(newItem);
+try {
+  await onAddItem(newItem);
+  alert("Item saved successfully!");
+} catch (error) {
+  console.error("Add item failed:", error);
+  alert("Item was not saved: " + error.message);
+  return;
+}
 
     setName("");
     setCategory("Tops");
+    setCustomCategory("");
     setImage("");
     setGender("Unisex");
     setSizeSystem("UK");
     setSize("");
     setSeason("All seasons");
     setOccasion("Everyday");
+    setCustomOccasion("");
     setAiAdvice("");
   };
 
@@ -117,11 +170,26 @@ function AddClothingForm({
         <option>Headwear</option>
         <option>Jackets</option>
         <option>Tops</option>
-        <option>Dresses</option>
+        <option>Dresses/ One-Piece</option>
         <option>Bottoms</option>
         <option>Accessories</option>
         <option>Shoes</option>
+        <option>Other</option>
       </select>
+
+      {category === "Other" && (
+        <input
+          type="text"
+          placeholder="Enter custom category"
+          value={customCategory}
+          onChange={(e) => setCustomCategory(e.target.value)}
+          style={{
+            padding: "8px",
+            margin: "6px",
+            width: "180px"
+          }}
+        />
+      )}
 
       <select
         value={gender}
@@ -169,19 +237,25 @@ function AddClothingForm({
         onChange={(e) => setOccasion(e.target.value)}
         style={{ padding: "8px", margin: "6px" }}
       >
-        <option>Everyday</option>
-        <option>Job Interview</option>
-        <option>Casual Dinner</option>
-        <option>Fancy Dinner</option>
-        <option>Date</option>
-        <option>House Party</option>
-        <option>Club Night</option>
-        <option>City Trip</option>
-        <option>Resort Holiday</option>
-        <option>Ski</option>
-        <option>Beach</option>
-        <option>Formal Event</option>
+        {allOccasions.map((item) => (
+          <option key={item}>{item}</option>
+        ))}
+        <option>Other</option>
       </select>
+
+      {occasion === "Other" && (
+        <input
+          type="text"
+          placeholder="Enter custom occasion"
+          value={customOccasion}
+          onChange={(e) => setCustomOccasion(e.target.value)}
+          style={{
+            padding: "8px",
+            margin: "6px",
+            width: "180px"
+          }}
+        />
+      )}
 
       <input
         type="file"

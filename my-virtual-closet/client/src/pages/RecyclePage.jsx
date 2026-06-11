@@ -2,8 +2,10 @@ import { useState } from "react";
 import PageLayout from "../components/PageLayout";
 import { useWardrobe } from "../store/WardrobeStore";
 import RecycleMap from "../components/RecycleMap";
+import { useTheme } from "../store/ThemeStore";
 
 function RecyclePage() {
+    const { theme } = useTheme();
   const { recycleItems, addRecycleItem, removeRecycleItem } = useWardrobe();
 
   const [name, setName] = useState("");
@@ -221,22 +223,26 @@ function RecyclePage() {
               style={{
                 border: "2px solid black",
                 padding: "14px",
-                background: "white",
+                background: theme.card,
+color: theme.text,
+border: `2px solid ${theme.border}`,
                 textAlign: "center"
               }}
             >
               {item.image && (
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  style={{
-                    width: "130px",
-                    height: "130px",
-                    objectFit: "cover",
-                    border: "1px solid black"
-                  }}
-                />
-              )}
+  <img
+    src={item.image}
+    alt={item.name}
+    style={{
+      width: "130px",
+      height: "130px",
+      objectFit: "cover",
+      border: "1px solid black",
+      display: "block",
+      margin: "0 auto 10px"
+    }}
+  />
+)}
 
               <h3>{item.name}</h3>
               <p>Category: {item.category}</p>

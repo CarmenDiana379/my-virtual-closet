@@ -17,12 +17,39 @@ function Wardrobe() {
     Headwear: 0,
     Neckwear: 0,
     Tops: 0,
-    Dresses: 0,
+    "Dresses/One Piece": 0,
     Bottoms: 0,
     Shoes: 0,
     Accessories: 0,
     Jackets: 0
   });
+
+  const normalizeCategory = (category) => {
+    if (!category) return "";
+
+    const cleaned = category.toLowerCase().trim();
+
+    if (
+      cleaned === "dress" ||
+      cleaned === "dresses" ||
+      cleaned === "dresses/one piece" ||
+      cleaned === "dresses/ one-piece" ||
+      cleaned === "dresses/ one piece"
+    ) {
+      return "Dresses/One Piece";
+    }
+
+    if (cleaned === "top" || cleaned === "tops") return "Tops";
+    if (cleaned === "bottom" || cleaned === "bottoms") return "Bottoms";
+    if (cleaned === "shoe" || cleaned === "shoes") return "Shoes";
+    if (cleaned === "accessory" || cleaned === "accessories")
+      return "Accessories";
+    if (cleaned === "jacket" || cleaned === "jackets") return "Jackets";
+    if (cleaned === "headwear" || cleaned === "hat" || cleaned === "hats")
+      return "Headwear";
+
+    return category.trim();
+  };
 
   const getDoorBackground = () => {
     if (selectedTheme === "Y2K") {
@@ -30,15 +57,15 @@ function Wardrobe() {
     }
 
     if (selectedTheme === "Gothic") {
-  return `
-    linear-gradient(
-      to bottom,
-      #1a1618,
-      #241b20,
-      #120f12
-    )
-  `;
-}
+      return `
+        linear-gradient(
+          to bottom,
+          #1a1618,
+          #241b20,
+          #120f12
+        )
+      `;
+    }
 
     if (selectedTheme === "Scene") {
       return "repeating-linear-gradient(45deg, #00ff99 0px, #00ff99 14px, #ff00ff 14px, #ff00ff 28px)";
@@ -64,49 +91,73 @@ function Wardrobe() {
   };
 
   const getItemsByCategory = (category) => {
+    const normalizedCategory = normalizeCategory(category);
+
     if (category === "Neckwear") {
-      return items.filter(
-        (item) =>
-          item.category === "Accessories" &&
-          (item.name.toLowerCase().includes("necklace") ||
-            item.name.toLowerCase().includes("scarf"))
-      );
+      return items.filter((item) => {
+        const itemName = item.name ? item.name.toLowerCase() : "";
+
+        return (
+          normalizeCategory(item.category) === "Accessories" &&
+          (itemName.includes("necklace") || itemName.includes("scarf"))
+        );
+      });
     }
 
     if (category === "Accessories") {
-      return items.filter(
-        (item) =>
-          item.category === "Accessories" &&
-          !item.name.toLowerCase().includes("necklace") &&
-          !item.name.toLowerCase().includes("scarf")
-      );
+      return items.filter((item) => {
+        const itemName = item.name ? item.name.toLowerCase() : "";
+
+        return (
+          normalizeCategory(item.category) === "Accessories" &&
+          !itemName.includes("necklace") &&
+          !itemName.includes("scarf")
+        );
+      });
     }
 
-    return items.filter((item) => item.category === category);
+    return items.filter(
+      (item) => normalizeCategory(item.category) === normalizedCategory
+    );
   };
 
   const moveCarousel = (category, direction) => {
     const categoryItems = getItemsByCategory(category);
-    if (categoryItems.length === 0) return;
+
+    if (categoryItems.length <= 1) return;
 
     setIndexes((prev) => {
-      let newIndex = prev[category] + direction;
+      const currentIndex = prev[category] ?? 0;
+
+      let newIndex = currentIndex + direction;
 
       if (newIndex < 0) newIndex = categoryItems.length - 1;
       if (newIndex >= categoryItems.length) newIndex = 0;
 
-      return { ...prev, [category]: newIndex };
+      return {
+        ...prev,
+        [category]: newIndex
+      };
     });
   };
 
   const getVisibleItems = (category) => {
     const categoryItems = getItemsByCategory(category);
-    const currentIndex = indexes[category] || 0;
+    const currentIndex = indexes[category] ?? 0;
 
     if (categoryItems.length === 0) return [];
 
     if (categoryItems.length === 1) {
       return [{ item: categoryItems[0], position: "center" }];
+    }
+
+    if (categoryItems.length === 2) {
+      const nextIndex = currentIndex === 0 ? 1 : 0;
+
+      return [
+        { item: categoryItems[currentIndex], position: "center" },
+        { item: categoryItems[nextIndex], position: "side-right" }
+      ];
     }
 
     const previousIndex =
@@ -116,9 +167,9 @@ function Wardrobe() {
       currentIndex === categoryItems.length - 1 ? 0 : currentIndex + 1;
 
     return [
-      { item: categoryItems[previousIndex], position: "side" },
+      { item: categoryItems[previousIndex], position: "side-left" },
       { item: categoryItems[currentIndex], position: "center" },
-      { item: categoryItems[nextIndex], position: "side" }
+      { item: categoryItems[nextIndex], position: "side-right" }
     ];
   };
 
@@ -146,13 +197,24 @@ function Wardrobe() {
       return;
     }
 
-    await saveOutfit(outfitName, outfitCategory, Object.values(selectedOutfit));
+    try {
+  await saveOutfit(
+    outfitName,
+    outfitCategory,
+    selectedOutfit
+  );
 
-    alert("Outfit saved!");
+  alert("Outfit saved successfully!");
 
-    setOutfitName("");
-    setOutfitCategory("Casual");
-    setSelectedOutfit({});
+  setOutfitName("");
+  setOutfitCategory("Casual");
+  setSelectedOutfit({});
+} catch (error) {
+  console.error("SAVE OUTFIT ERROR:", error);
+  alert("Outfit was not saved: " + error.message);
+}
+
+    
   };
 
   const buttonStyle = {
@@ -165,7 +227,9 @@ function Wardrobe() {
   };
 
   const renderRow = (category, label, outfitKey) => {
+    const categoryItems = getItemsByCategory(category);
     const visibleItems = getVisibleItems(category);
+    const arrowsDisabled = categoryItems.length <= 1;
 
     return (
       <div
@@ -194,11 +258,16 @@ function Wardrobe() {
           }}
         >
           <button
+            disabled={arrowsDisabled}
             onClick={(e) => {
               e.stopPropagation();
               moveCarousel(category, -1);
             }}
-            style={buttonStyle}
+            style={{
+              ...buttonStyle,
+              opacity: arrowsDisabled ? 0.4 : 1,
+              cursor: arrowsDisabled ? "not-allowed" : "pointer"
+            }}
           >
             ←
           </button>
@@ -232,7 +301,7 @@ function Wardrobe() {
             >
               {visibleItems.map(({ item, position }) => (
                 <div
-                  key={`${category}-${item.id}-${position}`}
+                  key={`${category}-${item.id}-${position}-${indexes[category] ?? 0}`}
                   onClick={(e) => {
                     e.stopPropagation();
 
@@ -306,11 +375,16 @@ function Wardrobe() {
           )}
 
           <button
+            disabled={arrowsDisabled}
             onClick={(e) => {
               e.stopPropagation();
               moveCarousel(category, 1);
             }}
-            style={buttonStyle}
+            style={{
+              ...buttonStyle,
+              opacity: arrowsDisabled ? 0.4 : 1,
+              cursor: arrowsDisabled ? "not-allowed" : "pointer"
+            }}
           >
             →
           </button>
@@ -411,7 +485,11 @@ function Wardrobe() {
           )}
 
           {mode === "One-piece" &&
-            renderRow("Dresses", "Dresses / One-pieces", "One-piece")}
+            renderRow(
+              "Dresses/One Piece",
+              "Dresses / One-pieces",
+              "One-piece"
+            )}
 
           {renderRow("Shoes", "Shoes", "Shoes")}
           {renderRow("Accessories", "Extra Accessories", "Accessories")}

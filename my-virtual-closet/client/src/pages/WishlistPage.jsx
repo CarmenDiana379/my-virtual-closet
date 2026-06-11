@@ -1,8 +1,10 @@
 import { useState } from "react";
 import PageLayout from "../components/PageLayout";
 import { useWardrobe } from "../store/WardrobeStore";
+import { useTheme } from "../store/ThemeStore";
 
 function WishlistPage() {
+    const { theme } = useTheme();
   const {
     wishlistItems,
     addWishlistItem,
@@ -100,7 +102,7 @@ function WishlistPage() {
           <option>Headwear</option>
 <option>Jackets</option>
 <option>Tops</option>
-<option>Dresses</option>
+<option>Dresses/ One-piece</option>
 <option>Bottoms</option>
 <option>Accessories</option>
 <option>Shoes</option>
@@ -200,22 +202,26 @@ function WishlistPage() {
               style={{
                 border: "2px solid black",
                 padding: "12px",
-                background: "white",
+                background: theme.card,
+color: theme.text,
+border: `2px solid ${theme.border}`,
                 textAlign: "center"
               }}
             >
               {item.image && (
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  style={{
-                    width: "120px",
-                    height: "120px",
-                    objectFit: "cover",
-                    border: "1px solid black"
-                  }}
-                />
-              )}
+  <img
+    src={item.image}
+    alt={item.name}
+    style={{
+      width: "120px",
+      height: "120px",
+      objectFit: "cover",
+      border: "1px solid black",
+      display: "block",
+      margin: "0 auto 10px"
+    }}
+  />
+)}
 
               <h3>{item.name}</h3>
               <p>{item.category}</p>

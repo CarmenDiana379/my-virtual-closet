@@ -63,7 +63,15 @@ function SignupPage() {
           alignItems: "center"
         }}
       >
-        <h2 style={{ margin: 0 }}>My Virtual Closet</h2>
+        <img
+    src="/images/logo1.png"
+    alt="My Virtual Closet Logo"
+    style={{
+      width: "250px",
+      height: "110px",
+      objectFit: "contain"
+    }}
+  />
 
         <button
           onClick={() => navigate("/")}
@@ -274,7 +282,34 @@ function SignupPage() {
     TikTok
   </a>
 </div>
-        <div>Contact Us | Subscribe | FAQ</div>
+        <div
+  style={{
+    display: "flex",
+    gap: "14px",
+    alignItems: "center"
+  }}
+>
+  <span
+    onClick={() => navigate("/contact")}
+    style={{ cursor: "pointer" }}
+  >
+    Contact Us
+  </span>
+
+  <span
+    onClick={() => navigate("/subscribe")}
+    style={{ cursor: "pointer" }}
+  >
+    Subscribe
+  </span>
+
+  <span
+    onClick={() => navigate("/faq")}
+    style={{ cursor: "pointer" }}
+  >
+    FAQ
+  </span>
+</div>
       </footer>
     </div>
   );

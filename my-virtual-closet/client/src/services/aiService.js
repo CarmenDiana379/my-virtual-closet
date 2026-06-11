@@ -44,9 +44,9 @@ export const generateSustainabilityAdvice = async ({
     );
   }
 
-  if (category === "Dresses") {
+  if (category === "Dresses/ One-piece") {
     tips.push(
-      "Dresses can be useful for one-piece outfit planning, especially when styled differently across seasons."
+      "Dresses/ One-piece can be useful for one-piece outfit planning, especially when styled differently across seasons."
     );
   }
 

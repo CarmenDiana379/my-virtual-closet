@@ -146,13 +146,69 @@ function PageLayout({ title, children, showDashboardButton = true }) {
           background: theme.card
         }}
       >
-        <div>
-          {theme.symbol} Facebook Instagram TikTok
-        </div>
+       <div
+  style={{
+    display: "flex",
+    gap: "15px",
+    alignItems: "center"
+  }}
+>
+  <a
+    href="https://www.facebook.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ color: "inherit", textDecoration: "none" }}
+  >
+    Facebook
+  </a>
 
-        <div>
-          Contact Us | Subscribe | FAQ {theme.symbol}
-        </div>
+  <a
+    href="https://www.instagram.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ color: "inherit", textDecoration: "none" }}
+  >
+    Instagram
+  </a>
+
+  <a
+    href="https://www.tiktok.com"
+    target="_blank"
+    rel="noopener noreferrer"
+    style={{ color: "inherit", textDecoration: "none" }}
+  >
+    TikTok
+  </a>
+</div>
+
+        <div
+  style={{
+    display: "flex",
+    gap: "14px",
+    alignItems: "center"
+  }}
+>
+  <span
+    onClick={() => navigate("/contact")}
+    style={{ cursor: "pointer" }}
+  >
+    Contact Us
+  </span>
+
+  <span
+    onClick={() => navigate("/subscribe")}
+    style={{ cursor: "pointer" }}
+  >
+    Subscribe
+  </span>
+
+  <span
+    onClick={() => navigate("/faq")}
+    style={{ cursor: "pointer" }}
+  >
+    FAQ
+  </span>
+</div>
       </div>
     </div>
   );

@@ -13,7 +13,7 @@ function WardrobePlanningPage() {
     "Headwear",
     "Jackets",
     "Tops",
-    "Dresses",
+    "Dresses/One Piece",
     "Bottoms",
     "Accessories",
     "Shoes"
@@ -31,6 +31,14 @@ function WardrobePlanningPage() {
   const [smartMessage, setSmartMessage] = useState("");
 
   const allItems = [...items, ...wishlistItems];
+
+  const normaliseCategory = (category) => {
+    if (category === "Dresses" || category === "Dresses/ One-piece ") {
+      return "Dresses/One Piece";
+    }
+
+    return category;
+  };
 
   const filteredItems = allItems.filter((item) => {
     const matchesSeason =
@@ -59,7 +67,9 @@ function WardrobePlanningPage() {
       : savedOutfits.filter((outfit) => outfit.outfitCategory === savedFilter);
 
   const getCategoryItems = (category) => {
-    return filteredItems.filter((item) => item.category === category);
+    return filteredItems.filter(
+      (item) => normaliseCategory(item.category) === category
+    );
   };
 
   const scoreItem = (item) => {
@@ -94,7 +104,7 @@ function WardrobePlanningPage() {
   const generateSmartOutfit = () => {
     const smartSelection = {};
 
-    const dress = chooseBestItem("Dresses");
+    const dress = chooseBestItem("Dresses/One Piece");
     const top = chooseBestItem("Tops");
     const bottom = chooseBestItem("Bottoms");
 
@@ -105,22 +115,34 @@ function WardrobePlanningPage() {
         occasionFilter === "Date");
 
     if (useDress) {
-      smartSelection.Dresses = dress;
+      smartSelection["Dresses/One Piece"] = dress;
     } else {
       if (top) smartSelection.Tops = top;
       if (bottom) smartSelection.Bottoms = bottom;
     }
 
-    ["Jackets", "Shoes", "Accessories", "Headwear"].forEach((category) => {
+    ["Jackets", "Shoes", "Headwear"].forEach((category) => {
       const item = chooseBestItem(category);
       if (item) smartSelection[category] = item;
     });
 
+    const accessoryItems = getCategoryItems("Accessories");
+
+    if (accessoryItems.length > 0) {
+      smartSelection.Accessories = accessoryItems.slice(0, 3);
+    }
+
     const newIndexes = {};
 
-    Object.entries(smartSelection).forEach(([category, item]) => {
+    Object.entries(smartSelection).forEach(([category, selectedValue]) => {
       const categoryItems = getCategoryItems(category);
-      newIndexes[category] = categoryItems.findIndex((i) => i.id === item.id);
+      const firstSelectedItem = Array.isArray(selectedValue)
+        ? selectedValue[0]
+        : selectedValue;
+
+      newIndexes[category] = categoryItems.findIndex(
+        (item) => item.id === firstSelectedItem.id
+      );
     });
 
     setCarouselIndexes(newIndexes);
@@ -134,23 +156,39 @@ function WardrobePlanningPage() {
   const handleArrow = (category, direction) => {
     const categoryItems = getCategoryItems(category);
 
-    if (categoryItems.length === 0) return;
+    if (!categoryItems || categoryItems.length === 0) return;
 
-    const currentIndex = carouselIndexes[category] || 0;
-    let newIndex = currentIndex + direction;
+    setCarouselIndexes((prev) => {
+      const currentIndex = prev[category] ?? 0;
 
-    if (newIndex < 0) newIndex = categoryItems.length - 1;
-    if (newIndex >= categoryItems.length) newIndex = 0;
+      let newIndex;
 
-    setCarouselIndexes((prev) => ({
-      ...prev,
-      [category]: newIndex
-    }));
+      if (direction === 1) {
+        newIndex =
+          currentIndex >= categoryItems.length - 1 ? 0 : currentIndex + 1;
+      } else {
+        newIndex =
+          currentIndex <= 0 ? categoryItems.length - 1 : currentIndex - 1;
+      }
 
-    setSelectedItems((prev) => ({
-      ...prev,
-      [category]: categoryItems[newIndex]
-    }));
+      return {
+  ...prev,
+  [category]: newIndex
+};
+    });
+  };
+
+  const removeAccessory = (accessoryId) => {
+    setSelectedItems((prev) => {
+      const accessories = Array.isArray(prev.Accessories)
+        ? prev.Accessories
+        : [];
+
+      return {
+        ...prev,
+        Accessories: accessories.filter((item) => item.id !== accessoryId)
+      };
+    });
   };
 
   const handleSaveOutfit = async () => {
@@ -159,12 +197,18 @@ function WardrobePlanningPage() {
       return;
     }
 
-    if (Object.keys(selectedItems).length === 0) {
+    if (Object.values(selectedItems).flat().length === 0) {
       alert("Please select outfit items first");
       return;
     }
 
-    await saveOutfit(outfitName, outfitCategory, Object.values(selectedItems));
+    try {
+await saveOutfit(outfitName, outfitCategory, selectedItems);
+  alert("Outfit saved successfully!");
+} catch (error) {
+  console.error("SAVE OUTFIT ERROR:", error);
+  alert("Outfit was not saved: " + error.message);
+}
 
     setOutfitName("");
     setSelectedItems({});
@@ -177,9 +221,11 @@ function WardrobePlanningPage() {
     setSmartMessage("");
   };
 
+  const selectedItemsFlat = Object.values(selectedItems).flat();
+
   const sustainabilityScore = Math.min(
-    Object.values(selectedItems).length * 12 +
-      Object.values(selectedItems).filter((item) =>
+    selectedItemsFlat.length * 12 +
+      selectedItemsFlat.filter((item) =>
         items.some((wardrobeItem) => wardrobeItem.id === item.id)
       ).length *
         6,
@@ -306,9 +352,13 @@ function WardrobePlanningPage() {
       >
         {categories.map((category) => {
           const categoryItems = getCategoryItems(category);
-          const currentIndex = carouselIndexes[category] || 0;
+          const currentIndex = carouselIndexes[category] ?? 0;
+          const selectedValue = selectedItems[category];
+
           const currentItem =
-            selectedItems[category] || categoryItems[currentIndex];
+            category === "Accessories"
+              ? categoryItems[currentIndex]
+              : selectedValue || categoryItems[currentIndex];
 
           return (
             <div
@@ -333,48 +383,107 @@ function WardrobePlanningPage() {
                     ↑
                   </button>
 
-                  <div>
-                    {currentItem.image && (
-                      <img
-                        src={currentItem.image}
-                        alt={currentItem.name}
-                        style={{
-                          width: "130px",
-                          height: "130px",
-                          objectFit: "cover",
-                          border: `1px solid ${theme.border}`,
-                          borderRadius: theme.radius
-                        }}
-                      />
-                    )}
+                  <div
+  onClick={() => {
+    if (category === "Accessories") {
+      const existingAccessories = Array.isArray(
+        selectedItems.Accessories
+      )
+        ? selectedItems.Accessories
+        : [];
 
-                    <p>{currentItem.name}</p>
+      const alreadySelected = existingAccessories.some(
+        (item) => item.id === currentItem.id
+      );
 
-                    <p>
-                      {currentItem.sizeSystem} {currentItem.size}
-                    </p>
+      if (!alreadySelected) {
+        setSelectedItems((prev) => ({
+          ...prev,
+          Accessories: [...existingAccessories, currentItem]
+        }));
+      }
+    } else {
+      setSelectedItems((prev) => ({
+        ...prev,
+        [category]: currentItem
+      }));
+    }
+  }}
+  style={{
+    display: "flex",
+    flexDirection: "column",
+    alignItems: "center",
+    justifyContent: "center",
+    cursor: "pointer"
+  }}
+>
+  {currentItem.image && (
+    <img
+      src={currentItem.image}
+      alt={currentItem.name}
+      style={{
+        width: "130px",
+        height: "130px",
+        objectFit: "cover",
+        border: `1px solid ${theme.border}`,
+        borderRadius: theme.radius
+      }}
+    />
+  )}
 
-                    <small>
-                      {currentItem.season} • {currentItem.occasion}
-                    </small>
-                  </div>
+  <p>{currentItem.name}</p>
+
+  <p>
+    {currentItem.sizeSystem} {currentItem.size}
+  </p>
+
+  <small>
+    {currentItem.season} • {currentItem.occasion}
+  </small>
+
+  {category === "Accessories" && (
+    <p style={{ fontSize: "12px", marginTop: "8px" }}>
+      Use arrows to add more accessories.
+    </p>
+  )}
+</div>
 
                   <button
-                    onClick={() => handleArrow(category, 1)}
-                    style={{ padding: "6px 16px", marginTop: "10px" }}
-                  >
-                    ↓
-                  </button>
-                </>
-              ) : (
-                <p>No matching items</p>
-              )}
-            </div>
-          );
-        })}
+  onClick={() => handleArrow(category, 1)}
+  style={{ padding: "6px 16px", marginTop: "10px" }}
+>
+  ↓
+</button>
+
+<p
+  style={{
+    marginTop: "10px",
+    fontSize: "12px",
+    fontWeight: "bold",
+    color: theme.text
+  }}
+>
+  Click item to select
+</p>
+</>
+) : (
+  <p>No matching items</p>
+)}
+</div>
+);
+})}
       </div>
 
       <h2>Selected Outfit</h2>
+      <button
+  onClick={clearOutfit}
+  style={{
+    padding: "8px 18px",
+    marginTop: "15px"
+  }}
+>
+  🗑 Clear Entire Outfit
+</button>
 
       <div
         style={{
@@ -385,10 +494,10 @@ function WardrobePlanningPage() {
           marginBottom: "25px"
         }}
       >
-        {Object.values(selectedItems).length === 0 ? (
+        {selectedItemsFlat.length === 0 ? (
           <p>No outfit selected yet.</p>
         ) : (
-          Object.values(selectedItems).map((item) => (
+          selectedItemsFlat.map((item) => (
             <div
               key={`selected-${item.id}`}
               style={{
@@ -413,6 +522,52 @@ function WardrobePlanningPage() {
               )}
 
               <p>{item.name}</p>
+
+              <button
+  type="button"
+  onClick={() => {
+    setSelectedItems((prev) => {
+      const updated = { ...prev };
+
+      Object.keys(updated).forEach((category) => {
+        if (Array.isArray(updated[category])) {
+          updated[category] = updated[category].filter(
+            (selectedItem) => selectedItem.id !== item.id
+          );
+
+          if (updated[category].length === 0) {
+            delete updated[category];
+          }
+        } else if (updated[category]?.id === item.id) {
+          delete updated[category];
+        }
+      });
+
+      return updated;
+    });
+  }}
+  style={{
+    padding: "5px 10px",
+    fontSize: "12px",
+    marginTop: "5px"
+  }}
+>
+  ❌ Remove
+</button>
+
+              {normaliseCategory(item.category) === "Accessories" && (
+                <button
+                  type="button"
+                  onClick={() => removeAccessory(item.id)}
+                  style={{
+                    padding: "5px 10px",
+                    fontSize: "12px",
+                    marginTop: "5px"
+                  }}
+                >
+                  Remove
+                </button>
+              )}
             </div>
           ))
         )}
@@ -623,23 +778,73 @@ function WardrobePlanningPage() {
                   justifyContent: "center"
                 }}
               >
-                {outfit.items.map((item) => (
-                  <div key={`${outfit.id}-${item.id}`}>
-                    {item.image && (
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                        style={{
-                          width: "50px",
-                          height: "50px",
-                          objectFit: "cover",
-                          border: `1px solid ${theme.border}`,
-                          borderRadius: theme.radius
-                        }}
-                      />
-                    )}
-                  </div>
-                ))}
+                {outfit.items?.map((item, index) => {
+  const fullItem =
+    [...items, ...wishlistItems].find(
+      (wardrobeItem) => wardrobeItem.id === item.id
+    ) || item;
+
+  return (
+    <div
+      key={`${outfit.id}-${item.id || index}`}
+      style={{
+        width: "70px",
+        minHeight: "90px",
+        border: `1px solid ${theme.border}`,
+        borderRadius: theme.radius,
+        padding: "6px",
+        background: theme.background,
+        color: theme.text,
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center"
+      }}
+    >
+      {fullItem.image ? (
+        <img
+          src={fullItem.image}
+          alt={fullItem.name}
+          style={{
+            width: "50px",
+            height: "50px",
+            objectFit: "cover",
+            borderRadius: theme.radius,
+            border: `1px solid ${theme.border}`
+          }}
+        />
+      ) : (
+        <div
+          style={{
+            width: "50px",
+            height: "50px",
+            borderRadius: theme.radius,
+            border: `1px dashed ${theme.border}`,
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontSize: "20px",
+            background: theme.card
+          }}
+        >
+          👕
+        </div>
+      )}
+
+      <p
+        style={{
+          fontSize: "10px",
+          margin: "5px 0 0",
+          textAlign: "center",
+          wordBreak: "break-word"
+        }}
+      >
+        {fullItem.name || "Item"}
+      </p>
+    </div>
+  );
+})}
+      
               </div>
 
               <button

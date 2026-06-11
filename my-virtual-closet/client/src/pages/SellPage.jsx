@@ -1,8 +1,10 @@
 import { useState } from "react";
 import PageLayout from "../components/PageLayout";
 import { useWardrobe } from "../store/WardrobeStore";
+import { useTheme } from "../store/ThemeStore";
 
 function SellPage() {
+    const { theme } = useTheme();
   const {
     items,
     sellItems,
@@ -291,21 +293,25 @@ function SellPage() {
                 border: "2px solid black",
                 padding: "14px",
                 textAlign: "center",
-                background: "white"
+                background: theme.card,
+color: theme.text,
+border: `2px solid ${theme.border}`,
               }}
             >
               {item.image && (
-                <img
-                  src={item.image}
-                  alt={item.name}
-                  style={{
-                    width: "130px",
-                    height: "130px",
-                    objectFit: "cover",
-                    border: "1px solid black"
-                  }}
-                />
-              )}
+  <img
+    src={item.image}
+    alt={item.name}
+    style={{
+      width: "130px",
+      height: "130px",
+      objectFit: "cover",
+      border: "1px solid black",
+      display: "block",
+      margin: "0 auto 10px"
+    }}
+  />
+)}
 
               <h3>{item.name}</h3>
               <p>{item.category}</p>

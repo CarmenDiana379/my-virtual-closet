@@ -307,6 +307,7 @@ export function ThemeProvider({ children }) {
   const [selectedTheme, setSelectedTheme] = useState(
     localStorage.getItem("selectedTheme") || "Minimalistic Chic"
   );
+  
 
   const loadAdminTemplates = async () => {
     const data = await getDocs(collection(db, "styleTemplates"));
@@ -321,7 +322,12 @@ export function ThemeProvider({ children }) {
       adminThemes[template.name] = {
         background: template.background || "#f8fafc",
         card: template.card || "#ffffff",
-        border: template.border || "#2f6f73",
+        border:
+  !template.border ||
+  template.border === template.card ||
+  template.border === template.background
+    ? "#6b7280"
+    : template.border,
         accent: template.accent || "#2f6f73",
         text: template.text || "#1f2933",
         font: template.font || "Arial, sans-serif",
@@ -365,6 +371,9 @@ export function ThemeProvider({ children }) {
     document.body.style.backgroundColor = currentTheme.background;
     document.body.style.color = currentTheme.text;
     document.body.style.fontFamily = currentTheme.font;
+    document.documentElement.style.setProperty("--theme-border", currentTheme.border);
+document.documentElement.style.setProperty("--theme-card", currentTheme.card);
+document.documentElement.style.setProperty("--theme-text", currentTheme.text);
   }, [selectedTheme, themes]);
 
   const saveTheme = async (themeName) => {
@@ -377,12 +386,24 @@ export function ThemeProvider({ children }) {
       });
     }
   };
+const currentTheme =
+  themes[selectedTheme] || defaultThemes["Minimalistic Chic"];
+
+const safeTheme = {
+  ...currentTheme,
+  border:
+    !currentTheme.border ||
+    currentTheme.border === currentTheme.card ||
+    currentTheme.border === currentTheme.background
+      ? currentTheme.accent || "#6b7280"
+      : currentTheme.border
+};
 
   return (
     <ThemeContext.Provider
       value={{
         selectedTheme,
-        theme: themes[selectedTheme] || defaultThemes["Minimalistic Chic"],
+        theme: safeTheme,
         saveTheme,
         themes,
         reloadThemes: loadAdminTemplates

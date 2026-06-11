@@ -21,6 +21,7 @@ import SustainabilityDashboardPage from "./pages/SustainabilityDashboardPage";
 import ContactPage from "./pages/ContactPage";
 import SubscribePage from "./pages/SubscribePage";
 import FAQPage from "./pages/FAQPage";
+import AdminFeedbackPage from "./pages/AdminFeedbackPage";
 
 function App() {
   return (
@@ -57,6 +58,14 @@ function App() {
 <Route path="/subscribe" element={<SubscribePage />} />
 
 <Route path="/faq" element={<FAQPage />} />
+<Route
+  path="/admin-feedback"
+  element={
+    <AdminRoute>
+      <AdminFeedbackPage />
+    </AdminRoute>
+  }
+/>
           <Route
           
   path="/sustainability-dashboard"

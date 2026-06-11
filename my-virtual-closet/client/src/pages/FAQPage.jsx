@@ -1,6 +1,8 @@
 import PageLayout from "../components/PageLayout";
+import { useTheme } from "../store/ThemeStore";
 
 function FAQPage() {
+    const { theme } = useTheme();
   return (
     <PageLayout title="FAQ">
       <div
@@ -16,7 +18,9 @@ function FAQPage() {
             border: "2px solid black",
             padding: "20px",
             marginTop: "20px",
-            background: "white"
+            background: theme.card,
+color: theme.text,
+border: `2px solid ${theme.border}`,
           }}
         >
           <h3>What is My Virtual Closet?</h3>

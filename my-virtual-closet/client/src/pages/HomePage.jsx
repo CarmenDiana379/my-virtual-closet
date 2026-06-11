@@ -242,7 +242,7 @@ function HomePage() {
                 "linear-gradient(135deg, rgba(224,242,241,0.75), rgba(243,232,255,0.65))"
             }}
           >
-            {["Headwear", "Tops", "Dresses", "Shoes"].map((item, index) => (
+            {["Headwear", "Tops", "Dresses/ One-piece", "Shoes"].map((item, index) => (
               <div
                 key={item}
                 style={{
@@ -420,7 +420,34 @@ function HomePage() {
     TikTok
   </a>
 </div>
-        <div>Contact Us | Subscribe | FAQ</div>
+        <div
+  style={{
+    display: "flex",
+    gap: "14px",
+    alignItems: "center"
+  }}
+>
+  <span
+    onClick={() => navigate("/contact")}
+    style={{ cursor: "pointer" }}
+  >
+    Contact Us
+  </span>
+
+  <span
+    onClick={() => navigate("/subscribe")}
+    style={{ cursor: "pointer" }}
+  >
+    Subscribe
+  </span>
+
+  <span
+    onClick={() => navigate("/faq")}
+    style={{ cursor: "pointer" }}
+  >
+    FAQ
+  </span>
+</div>
       </div>
 
       {/* LOGIN POPUP */}

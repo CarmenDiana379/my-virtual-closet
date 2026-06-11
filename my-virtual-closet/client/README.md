@@ -1,70 +1,129 @@
-# Getting Started with Create React App
+# My Virtual Closet
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Project Overview
 
-## Available Scripts
+My Virtual Closet is a web-based wardrobe management application developed as part of a Computing dissertation project. The system enables users to digitally organise clothing items, create and save outfits, manage wishlists, recycle or sell unwanted garments, and make more sustainable fashion decisions.
 
-In the project directory, you can run:
+The application combines wardrobe management with sustainability-focused features, encouraging users to maximise the use of existing clothing and reduce unnecessary fashion consumption.
 
-### `npm start`
+---
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+## Live Application
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+Deployment URL:
 
-### `npm test`
+https://my-virtual-closet-82365.web.app
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+---
 
-### `npm run build`
+## Test Accounts
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Standard User Account
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+Email: [test@gmail.com](mailto:test@gmail.com)
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+Password: test123
 
-### `npm run eject`
+### Administrator Account
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+Email: [admin@gmail.com](mailto:admin@gmail.com)
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+Password: admin123
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
+---
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+## Main Features
 
-## Learn More
+### User Features
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+* User registration and authentication
+* Digital wardrobe management
+* Clothing categorisation by type, season and occasion
+* Outfit planning and saving
+* Wishlist management
+* Recycling functionality
+* Selling functionality
+* Sustainability dashboard
+* Activity timeline
+* Multiple wardrobe themes and customisation options
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+### Administrator Features
 
-### Code Splitting
+* User management
+* User inspection panel
+* User promotion to administrator
+* User removal
+* Feedback management
+* Platform analytics
+* Style template creation and management
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+---
 
-### Analyzing the Bundle Size
+## Technologies Used
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
+### Frontend
 
-### Making a Progressive Web App
+* React.js
+* JavaScript
+* React Router
+* CSS
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
+### Backend
 
-### Advanced Configuration
+* Firebase Authentication
+* Firebase Firestore
+* Firebase Hosting
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
+---
 
-### Deployment
+## Installation
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
+Clone the repository:
 
-### `npm run build` fails to minify
+```bash
+git clone <repository-url>
+```
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+Install dependencies:
+
+```bash
+npm install
+```
+
+Start the development server:
+
+```bash
+npm start
+```
+
+Open:
+
+```text
+http://localhost:3000
+```
+
+---
+
+## Build for Production
+
+```bash
+npm run build
+```
+
+---
+
+## Project Purpose
+
+The purpose of this project is to support sustainable fashion behaviour through digital wardrobe management, outfit planning and responsible clothing consumption practices.
+
+---
+
+## Author
+
+Carmen Diana Csatlos
+10392921
+
+BSc Computing
+
+
+2026

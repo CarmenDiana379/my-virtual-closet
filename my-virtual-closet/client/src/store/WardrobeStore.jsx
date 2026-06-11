@@ -599,52 +599,77 @@ export function WardrobeProvider({ children }) {
   };
 
   /* =========================
-     OUTFITS
-  ========================= */
+   OUTFITS
+========================= */
 
-  const saveOutfit = async (
+const saveOutfit = async (
+  name,
+  outfitCategory,
+  outfitItems
+) => {
+  if (!user) return;
+
+  const itemsArray = Array.isArray(outfitItems)
+    ? outfitItems
+    : Object.values(outfitItems).flat();
+
+  const smallOutfitItems = itemsArray.map((item) => ({
+    id: item.id || "",
+    name: item.name || "",
+    category: item.category || "",
+
+    // SAVE SMALL IMAGE ONLY
+    image:
+      item.image && item.image.length < 300000
+        ? item.image
+        : "",
+
+    size: item.size || "",
+    sizeSystem: item.sizeSystem || "",
+    season: item.season || "",
+    occasion: item.occasion || ""
+  }));
+
+  const newOutfit = {
     name,
     outfitCategory,
-    outfitItems
-  ) => {
-    if (!user) return;
-
-    const newOutfit = {
-      name,
-      outfitCategory,
-      items: Array.isArray(outfitItems)
-        ? outfitItems
-        : Object.values(outfitItems)
-    };
-
-    const docRef = await addDoc(
-      getUserCollection("savedOutfits"),
-      newOutfit
-    );
-
-    setSavedOutfits((prev) => [
-      ...prev,
-      { ...newOutfit, id: docRef.id }
-    ]);
-
-    await logActivity({
-      action: "save_outfit",
-      outfitCategory,
-      itemName: name
-    });
+    items: smallOutfitItems,
+    createdAt: new Date()
   };
 
-  const deleteOutfit = async (id) => {
-    if (!user) return;
+  console.log("SAVING OUTFIT:", newOutfit);
 
-    await deleteDoc(
-      doc(db, "users", user.uid, "savedOutfits", id)
-    );
+  const docRef = await addDoc(
+    getUserCollection("savedOutfits"),
+    newOutfit
+  );
 
-    setSavedOutfits((prev) =>
-      prev.filter((o) => o.id !== id)
-    );
-  };
+  setSavedOutfits((prev) => [
+    ...prev,
+    {
+      ...newOutfit,
+      id: docRef.id
+    }
+  ]);
+
+  await logActivity({
+    action: "save_outfit",
+    outfitCategory,
+    itemName: name
+  });
+};
+
+const deleteOutfit = async (id) => {
+  if (!user) return;
+
+  await deleteDoc(
+    doc(db, "users", user.uid, "savedOutfits", id)
+  );
+
+  setSavedOutfits((prev) =>
+    prev.filter((o) => o.id !== id)
+  );
+};
 
   return (
     <WardrobeContext.Provider

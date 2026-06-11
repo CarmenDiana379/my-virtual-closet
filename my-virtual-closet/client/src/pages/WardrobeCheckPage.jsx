@@ -6,32 +6,96 @@ import { useWardrobe } from "../store/WardrobeStore";
 import { useTheme } from "../store/ThemeStore";
 
 function WardrobeCheckPage() {
-  const { items, wishlistItems, recycleItems, addItem, moveToBin } = useWardrobe();
+  const { items, wishlistItems, recycleItems, addItem, moveToBin } =
+    useWardrobe();
+
   const { theme } = useTheme();
 
-  const categories = [
-  "Headwear",
-  "Jackets",
-  "Tops",
-  "Dresses",
-  "Bottoms",
-  "Accessories",
-  "Shoes"
-];
+  const defaultCategories = [
+    "Headwear",
+    "Jackets",
+    "Tops",
+    "Dresses/One Piece",
+    "Bottoms",
+    "Accessories",
+    "Shoes"
+  ];
 
-  const [selectedCategory, setSelectedCategory] = useState("Tops");
+  const customCategories = [
+    ...new Set(
+      items
+        .map((item) => item.category)
+        .filter(
+          (cat) =>
+            cat &&
+            cat !== "Dresses" &&
+            cat !== "Dresses/ One-piece " &&
+            !defaultCategories.includes(cat)
+        )
+    )
+  ];
+
+  const categories = ["All", ...defaultCategories, ...customCategories];
+
+  const [selectedCategory, setSelectedCategory] = useState("All");
   const [genderFilter, setGenderFilter] = useState("All");
   const [sizeSystemFilter, setSizeSystemFilter] = useState("All");
   const [seasonFilter, setSeasonFilter] = useState("All");
   const [occasionFilter, setOccasionFilter] = useState("All");
 
-  const handleAddItem = (newItem) => {
-    addItem(newItem);
-    setSelectedCategory(newItem.category);
+  const defaultOccasions = [
+    "Everyday",
+    "Job Interview",
+    "Casual Dinner",
+    "Fancy Dinner",
+    "Date",
+    "House Party",
+    "Club Night",
+    "City Trip",
+    "Resort Holiday",
+    "Ski",
+    "Beach",
+    "Formal Event"
+  ];
+
+  const customOccasions = [
+    ...new Set(
+      items
+        .map((item) => item.occasion)
+        .filter(
+          (occasion) =>
+            occasion &&
+            !defaultOccasions.includes(occasion)
+        )
+    )
+  ];
+
+  const occasions = ["All", ...defaultOccasions, ...customOccasions];
+
+const handleAddItem = async (newItem) => {
+    const updatedItem = {
+      ...newItem,
+      category:
+        newItem.category === "Dresses" ||
+        newItem.category === "Dresses/ One-piece "
+          ? "Dresses/One Piece"
+          : newItem.category
+    };
+
+await addItem(updatedItem);
+    setSelectedCategory("All");
+    setOccasionFilter("All");
   };
 
   const filteredItems = items.filter((item) => {
-    const matchesCategory = item.category === selectedCategory;
+    const itemCategory =
+      item.category === "Dresses" ||
+      item.category === "Dresses/ One-piece "
+        ? "Dresses/One Piece"
+        : item.category;
+
+    const matchesCategory =
+      selectedCategory === "All" || itemCategory === selectedCategory;
 
     const matchesGender =
       genderFilter === "All" || item.gender === genderFilter;
@@ -59,11 +123,12 @@ function WardrobeCheckPage() {
   return (
     <PageLayout title="Wardrobe Check">
       <AddClothingForm
-  onAddItem={handleAddItem}
-  items={items}
-  wishlistItems={[]}
-  recycleItems={[]}
-/>
+        onAddItem={handleAddItem}
+        items={items}
+        wishlistItems={wishlistItems}
+        recycleItems={recycleItems}
+        existingOccasions={customOccasions}
+      />
 
       <h2>Category</h2>
 
@@ -169,19 +234,9 @@ function WardrobeCheckPage() {
             border: `2px solid ${theme.border}`
           }}
         >
-          <option>All</option>
-          <option>Everyday</option>
-          <option>Job Interview</option>
-          <option>Casual Dinner</option>
-          <option>Fancy Dinner</option>
-          <option>Date</option>
-          <option>House Party</option>
-          <option>Club Night</option>
-          <option>City Trip</option>
-          <option>Resort Holiday</option>
-          <option>Ski</option>
-          <option>Beach</option>
-          <option>Formal Event</option>
+          {occasions.map((occasion) => (
+            <option key={occasion}>{occasion}</option>
+          ))}
         </select>
       </div>
 
